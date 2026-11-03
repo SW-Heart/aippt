@@ -63,7 +63,7 @@ const STATIONS = [
   ['提出问题', '目标 · 约束 · 验证方式', 'INPUT'],
   ['自主探索', '多 Agent 并行 · 数十天运行', 'EXPLORE'],
   ['人机协作', '关键节点 @ 研究者审核', 'REVIEW'],
-  ['验证交付', 'Lean4 检查 · 论文与复现', 'VERIFY'],
+  ['验证交付', 'Lean4 定理库 · 机器检查证明', 'VERIFY'],
 ];
 const MX = [170, 490, 810, 1130];
 function stationScreen(i, x) {
@@ -177,7 +177,7 @@ const lanes = [
   ['提出问题', '从一个边界清晰的课题开始', [['定义研究问题', 5]]],
   ['自主探索', '在开箱即用的环境里，长时间、多路径推进', [['科研环境', 6], ['长周期探索', 7], ['专业工具', 8]]],
   ['人机协作', '过程透明，关键节点由研究者把关', [['协作看板', 9], ['进度与审核', 10]]],
-  ['验证交付', '机器可检查的证明，可复现的成果', [['Lean4 验证', 11], ['论文与复现', 12], ['任务总结', 13]]],
+  ['验证交付', '复用定理库，机器检查证明，成果可复现', [['定理库与知识图谱', 11], ['Lean4 验证', 12], ['论文与复现', 13], ['任务总结', 14]]],
 ];
 add('一条流水线', 1, `
 <div class="content">
@@ -415,26 +415,171 @@ add('进度与审核', 4, `
   </div>
 </div>`);
 
-// 11 Lean4 -------------------------------------------------------------
+// 11 Lean4 定理库与知识图谱（核心能力，深色重点页）--------------------------
+// 知识图谱：确定性随机布局，每次构建结果一致；检索动画由 data-tl 时间轴驱动（见 src/deck.js）
+function mulberry(seed) {
+  return () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const kgSvg = (() => {
+  const rnd = mulberry(20261103);
+  const gs = () => (rnd() + rnd() + rnd() - 1.5) / 1.5;
+  const TX = 410, TY = 300;
+  const CL = [
+    ['数论', 'NUMBER THEORY', 170, 205, 88], ['有限域', 'FINITE FIELDS', 425, 112, 78], ['群论', 'GROUP THEORY', 660, 150, 84],
+    ['组合', 'COMBINATORICS', 128, 385, 72], ['线性代数', 'LINEAR ALGEBRA', 690, 345, 68], ['拓扑', 'TOPOLOGY', 410, 490, 66], ['分析', 'ANALYSIS', 640, 492, 62],
+  ];
+  const HITS = [
+    ['素数与整除', 0, 222, 238], ['Bézout · gcd', 0, 118, 162], ['ZMod p 是域', 1, 458, 138],
+    ['x² = 1 ⇒ x = ±1', 1, 362, 84], ['单位群逆元配对', 2, 618, 196], ['有限积 · Finset.prod', 3, 160, 400],
+  ];
+  // 左上为课题卡、左下为检索结果卡，避开这两块区域
+  const blocked = (x, y) => (x < 300 && y < 96) || (x < 300 && y > 462) || Math.hypot(x - TX, y - TY) < 46;
+  const nodes = HITS.map(([, c, x, y]) => ({ x, y, c, hit: true }));
+  CL.forEach(([, , cx, cy, r], c) => {
+    for (let k = 0, tries = 0; k < 40 && tries < 900; tries++) {
+      const x = cx + gs() * r * 1.1, y = cy + gs() * r * 0.9;
+      if (x < 8 || x > 752 || y < 8 || y > 552 || blocked(x, y) || nodes.some((n) => Math.hypot(n.x - x, n.y - y) < 13)) continue;
+      nodes.push({ x, y, c }); k++;
+    }
+  });
+  const edges = new Set();
+  const link = (a, b) => edges.add(a < b ? `${a}-${b}` : `${b}-${a}`);
+  nodes.forEach((n, i) => {
+    const near = nodes.map((m, j) => [j, Math.hypot(m.x - n.x, m.y - n.y), m.c]).filter(([j]) => j !== i).sort((a, b) => a[1] - b[1]);
+    near.filter(([, , c]) => c === n.c).slice(0, 2).forEach(([j]) => link(i, j));
+    if (rnd() < 0.14) { const o = near.find(([, , c, ]) => c !== n.c); if (o && o[1] < 150) link(i, o[0]); }
+  });
+  const f = (v) => v.toFixed(1);
+  const edgeSvg = [...edges].map((e) => { const [a, b] = e.split('-').map(Number); return `<path d="M${f(nodes[a].x)} ${f(nodes[a].y)}L${f(nodes[b].x)} ${f(nodes[b].y)}"/>`; }).join('');
+  const nodeSvg = nodes.filter((n) => !n.hit).map((n) => { const tw = rnd() < 0.22; return `<circle class="${tw ? 'tw' : ''}" ${tw ? `style="animation-delay:${(-rnd() * 5).toFixed(2)}s"` : ''} cx="${f(n.x)}" cy="${f(n.y)}" r="${(1.3 + rnd() * rnd() * 3).toFixed(1)}"/>`; }).join('');
+  const T0 = 1500, STEP = 380, LINK = T0 + HITS.length * STEP + 200, OK = LINK + 1300;
+  const hitSvg = HITS.map(([t, , x, y], i) => {
+    const mx = (x + TX) / 2, my = (y + TY) / 2, dx = TX - x, dy = TY - y, L = Math.hypot(dx, dy), bend = (i % 2 ? 1 : -1) * L * 0.18;
+    const d = `M${x} ${y}Q${f(mx - (dy / L) * bend)} ${f(my + (dx / L) * bend)} ${TX} ${TY}`;
+    const right = x < 600;
+    return `<g class="kg-hit" data-at="${T0 + i * STEP}">
+      <path class="kg-link" pathLength="1" d="${d}" data-at="${LINK + i * 90}"/>
+      <circle class="kg-flow" r="2.6"><animateMotion dur="1.6s" begin="${(i * 0.27).toFixed(2)}s" repeatCount="indefinite" path="${d}"/></circle>
+      <circle class="kg-halo" cx="${x}" cy="${y}" r="13"/><circle class="kg-hn" cx="${x}" cy="${y}" r="5.5"/>
+      <text class="kg-hl" x="${right ? x + 13 : x - 13}" y="${y - 10}" text-anchor="${right ? 'start' : 'end'}">${t}</text>
+    </g>`;
+  }).join('');
+  return `<svg class="kg" viewBox="0 0 760 560" aria-label="Lean4 定理知识图谱检索动画">
+    <defs><radialGradient id="kgGlow"><stop offset="0" stop-color="#CDF55A" stop-opacity=".28"/><stop offset="1" stop-color="#CDF55A" stop-opacity="0"/></radialGradient></defs>
+    ${CL.map(([zh, en, cx, cy, r]) => `<text class="kg-cl" x="${cx}" y="${cy - r * 0.95}" text-anchor="middle">${zh}<tspan dx="6">${en}</tspan></text>`).join('')}
+    <g class="kg-e">${edgeSvg}</g><g class="kg-n">${nodeSvg}</g>
+    <circle class="kg-scan" cx="${TX}" cy="${TY}" r="10" data-at="900"/>
+    ${hitSvg}
+    <g class="kg-target">
+      <circle class="kg-glow" cx="${TX}" cy="${TY}" r="90" data-at="${OK}"/>
+      <circle class="kg-ring" cx="${TX}" cy="${TY}" r="30"/>
+      <g class="kg-q" data-at="700" data-off="${OK}"><circle cx="${TX}" cy="${TY}" r="20"/><text x="${TX}" y="${TY + 7}" text-anchor="middle">?</text></g>
+      <g class="kg-ok" data-at="${OK}"><circle cx="${TX}" cy="${TY}" r="21"/><path d="M${TX - 8} ${TY}l5.5 5.5 11-11"/></g>
+      <circle class="kg-ripple" cx="${TX}" cy="${TY}" r="21" data-at="${OK + 900}"/>
+      <text class="kg-tl" x="${TX}" y="${TY + 50}" text-anchor="middle">Wilson 定理</text>
+      <text class="kg-ts" x="${TX}" y="${TY + 68}" text-anchor="middle" data-at="${OK + 900}">已验证 · 回流定理库</text>
+    </g>
+  </svg>`;
+})();
+add('Lean4 定理库', 5, `
+<div class="content lib">
+  <div class="lib-l">
+    ${kick(4)}
+    <h2 class="${rv(1)}">定理库 × 知识图谱，<br>让验证<em>从复用开始</em></h2>
+    <p class="lead ${rv(2)}">我们收集、整理大量 Lean4 库，统一版本并预编译为可直接调用的定理库，再把定理之间的依赖关系构建为知识图谱。</p>
+    <div class="feats">
+      ${[['book', '可执行定理库', '统一版本、预编译，每条定理可直接 import 并通过编译'], ['tree', '定理知识图谱', '定义、引理与定理的依赖关系结构化，按领域与概念检索'], ['bolt', '检索即复用', '新课题先查图谱，已验证的部分直接调用，只形式化真正新的论证']]
+        .map(([k, t, d], i) => `<div class="feat ${rv(3 + i)}">${ico(k)}<div><b>${t}</b><span>${d}</span></div></div>`).join('')}
+    </div>
+    <div class="cmp ${rv(6)}">
+      <div class="cmp-h"><span>同一课题的形式化工作量</span><span class="note">示意</span></div>
+      <div class="cmp-r"><span class="cmp-k">从零构建</span><div class="cmp-bar full"><i style="--w:24%">基础定义</i><i style="--w:34%">通用引理</i><i style="--w:16%">环境依赖</i><i class="core" style="--w:26%">核心论证</i></div></div>
+      <div class="cmp-r"><span class="cmp-k">复用定理库</span><div class="cmp-bar"><i class="hit" style="--w:7%">检索</i><i class="core" style="--w:26%">核心论证</i><span class="cmp-save">验证周期大幅缩短</span></div></div>
+    </div>
+  </div>
+  <div class="lib-r ${rv(2)}" data-tl data-loop="13000">
+    <div class="kg-card q" data-at="300"><span class="kg-ck">NEW PROBLEM · 待验证课题</span><b>Wilson 定理</b><span class="math">n 为素数 ⇔ (n − 1)! ≡ −1 (mod n)</span></div>
+    ${kgSvg}
+    <div class="kg-card r">
+      <span class="kg-ck">图谱检索结果</span>
+      <div data-at="1500"><span>命中已验证引理</span><b class="lime">6 条 · 直接复用</b></div>
+      <div data-at="4300"><span>需新形式化</span><b>1 项核心论证</b></div>
+      <div data-at="5500"><span>内核检查</span><b class="lime">✓ 通过 · 入库</b></div>
+    </div>
+  </div>
+</div>`, { dark: true });
+
+// 12 Lean4 形式化验证：编辑器实时检查动画 + 真实验收截图 -----------------------
+const LEAN = [
+  ['import Mathlib.FieldTheory.Finite.Basic'],
+  [''],
+  ['open Nat'],
+  [''],
+  ['/-- Wilson 定理：n > 1 时，n 为素数 ⇔ (n-1)! ≡ -1 (mod n) -/'],
+  ['theorem wilson_iff (n : ℕ) (hn : 1 < n) :'],
+  ['    n.Prime ↔ ((n - 1)! : ZMod n) = -1 := by'],
+  ['  constructor'],
+  ['  · intro hp'],
+  ['    haveI := Fact.mk hp            -- ZMod p 是域', 1],
+  ['    exact prod_pairing_eq_neg_one n  -- 逆元两两配对'],
+  ['  · intro h'],
+  ['    by_contra hnp'],
+  ['    obtain ⟨d, hd, h2, hl⟩ :=        -- 合数必有真因子'],
+  ['      exists_dvd_of_not_prime2 hn hnp', 1],
+  ['    exact not_dvd_of_neg_one h hd'],
+  ['      (dvd_factorial_sub_one h2 hl)'],
+];
+const KW = /\b(import|open|theorem|lemma|by|constructor|intro|haveI|exact|by_contra|obtain|fun)\b/g;
+function leanHl(src) {
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  if (src.trim().startsWith('/--')) return `<span class="lc">${esc(src)}</span>`;
+  const [code, cm] = src.split(/(?=--)/);
+  const body = esc(code).replace(KW, '<span class="lk">$1</span>').replace(/(ℕ|ZMod|Fact|Prime)/g, '<span class="lt">$1</span>').replace(/(?<![\w.])(-?\d+)(?![\w])/g, '<span class="ln">$1</span>');
+  return body + (cm ? `<span class="lc">${esc(cm)}</span>` : '');
+}
+const LT = (i) => 500 + i * 170;
+const ivState = (at, off, title, hyps, goal) => `<div class="iv-s" data-at="${at}" ${off ? `data-off="${off}"` : ''}>
+  <div class="iv-t">${title}</div>${hyps.map(([h, t]) => `<div class="iv-hy"><b>${h}</b> : ${t}</div>`).join('')}<div class="iv-g"><b>⊢</b> ${goal}</div></div>`;
+const leanPane = `<div class="pane lean on" data-file="wilson-lean4 · Main.lean（示意片段）" data-tl>
+  <div class="ed">
+    <ol class="code">${LEAN.map(([l, lib], i) => `<li data-at="${LT(i)}" class="${lib ? 'reuse' : ''}"><span class="gut">${lib ? '◆' : ''}</span><code>${leanHl(l) || '&nbsp;'}</code></li>`).join('')}</ol>
+    <div class="iv">
+      <div class="iv-h">Lean Infoview<span>Main.lean</span></div>
+      ${ivState(LT(6), LT(9), '1 goal', [['n', 'ℕ'], ['hn', '1 &lt; n']], 'Nat.Prime n ↔ ↑(n - 1)! = -1')}
+      ${ivState(LT(9), LT(12), 'case mp', [['n', 'ℕ'], ['hp', 'Nat.Prime n'], ['this', 'Fact (Nat.Prime n)']], '↑(n - 1)! = -1')}
+      ${ivState(LT(12), LT(17), 'case mpr', [['h', '↑(n - 1)! = -1'], ['hnp', '¬Nat.Prime n'], ['d', 'ℕ'], ['hd', 'd ∣ n']], 'False')}
+      <div class="iv-s done" data-at="${LT(17)}">
+        <div class="iv-ok"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9"/></svg><div><b>No goals</b><span>wilson_iff 通过 Lean 内核检查</span></div></div>
+        <div class="iv-ax"><span class="lc">#print axioms wilson_iff</span><br>'wilson_iff' depends on axioms:<br>[<span class="lk">propext</span>, <span class="lk">Classical.choice</span>, <span class="lk">Quot.sound</span>]</div>
+      </div>
+    </div>
+  </div>
+  <div class="sb"><span>Lean 4.33.1 · Mathlib 0df444a</span><span class="legend"><i>◆</i>复用定理库中的已验证结果</span><span class="sb-ok" data-at="${LT(17) + 300}">lake build ✓ 12/12 模块 · 61/61 义务</span></div>
+</div>`;
+const leanShots = await Promise.all([['lean-acceptance', 'Lean 形式化验收记录', true], ['lean-delivery', 'Lean 交付与复现方式', false]]
+  .map(async ([n, file, contain]) => `<img class="${contain ? 'contain' : ''}" src="${await shot(n)}" alt="${file}" data-file="${file}" style="object-position:${contain ? 'center' : 'top center'}" loading="lazy">`));
 add('Lean4 形式化验证', 5, `
 <div class="content">
-  <div class="row" style="gap:52px;height:100%">
-    <div style="flex:0 0 520px">
-      ${kick(4)}
-      <h2 class="${rv(1)}">Lean4 形式化验证，<br><span class="hl">让证明经得起机器检查</span></h2>
-      <p class="lead ${rv(2)}" style="margin-bottom:30px">自建并预编译 Lean4 库，逐项检查证明义务，交付可在全新目录独立复现的工程。</p>
-      <div class="stats ${rv(3)}">
-        <div class="stat"><div class="v">61<small>/61</small></div><div class="k">证明义务精确类型检查<br>全部通过</div></div>
-        <div class="stat"><div class="v">12<small>个</small></div><div class="k">Lean 模块，含主证明、<br>联合导入与验证入口</div></div>
-        <div class="stat"><div class="v">7,681</div><div class="k">传递常量完成依赖审计，<br>仅用 3 条标准公理</div></div>
-        <div class="stat"><div class="v">57<small>/57</small></div><div class="k">交付文件 SHA-256<br>校验全部匹配</div></div>
+  <div class="head" style="max-width:none">
+    ${kick(4)}
+    <h2 class="${rv(1)}">经过 Lean 完整验证，<span class="hl">证明才更容易被认可</span></h2>
+    <p class="lead ${rv(2)}" style="max-width:none">审阅者不必逐行核对推导，只需确认定理陈述是否准确——其余每一步都由机器严格检查。</p>
+  </div>
+  <div class="row" style="margin-top:26px;height:500px;gap:40px">
+    <div class="trust">
+      ${[['内核逐步检查', '每一步推导都经 Lean 内核检查，没有“显然成立”的跳步'], ['依赖完全透明', '仅依赖 3 条标准公理，引用的每个结论都可追溯'], ['任何人可复现', '锁定 Lean 与 Mathlib 版本，lake build 一键重新验证'], ['成果回流定理库', '通过验证的定理进入知识图谱，供下一个课题复用']]
+        .map(([t, d], i) => `<div class="${rv(3 + i)}"><span class="num">0${i + 1}</span><b>${t}</b><span>${d}</span></div>`).join('')}
+      <div class="mstats ${rv(7)}">
+        ${[['61', '/61', '证明义务全部通过'], ['12', '个', 'Lean 模块'], ['7,681', '', '传递常量依赖审计'], ['57', '/57', 'SHA-256 校验匹配']]
+          .map(([v, s, k]) => `<div><div class="v">${v}<small>${s}</small></div><div class="k">${k}</div></div>`).join('')}
       </div>
-      <p class="note" style="margin-top:14px">数据来自 Wilson 定理示例任务的验收记录。</p>
+      <p class="note" style="margin:8px 0 0">数据来自 Wilson 定理示例任务的验收记录。</p>
     </div>
-    <div class="${rv(3)}" style="flex:1;display:flex;padding-top:8px">${await gallery([
-      ['lean-acceptance', '验收结果', { file: 'Lean 形式化验收', contain: true, pos: 'center' }],
-      ['lean-delivery', '交付与复现方式', { file: 'Lean 交付文件' }],
-    ])}</div>
+    <div class="gallery ${rv(3)}">
+      <div class="tabs" role="tablist">${['实时检查', '验收记录', '交付与复现'].map((t, i) => `<button role="tab" aria-selected="${i === 0}">${t}</button>`).join('')}</div>
+      <div class="win nozoom" data-zoom><div class="win-bar"><i></i><i></i><i></i><span class="wt">wilson-lean4 · Main.lean（示意片段）</span><span class="zoom">⤢ 点击放大</span></div>
+      <div class="shots">${leanPane}${leanShots.join('')}</div></div>
+    </div>
   </div>
 </div>`);
 

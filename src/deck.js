@@ -17,6 +17,7 @@
       const on = j === current;
       s.classList.toggle('active', on);
       s.setAttribute('aria-hidden', String(!on));
+      timeline(s, on);
     });
     const n = String(current + 1).padStart(2, '0');
     $('counter').textContent = `${n} / ${String(slides.length).padStart(2, '0')}`;
@@ -29,6 +30,33 @@
     $('overview').classList.remove('open');
   }
   window.go = go;
+
+  // 时间轴：[data-tl] 容器进入页面后，按子元素的 data-at / data-off（毫秒）添加、移除 .on；data-loop 时循环播放
+  const tlTimers = new Map();
+  function timeline(slide, on) {
+    slide.querySelectorAll('[data-tl]').forEach((root) => {
+      (tlTimers.get(root) || []).forEach(clearTimeout);
+      const items = [...root.querySelectorAll('[data-at]')];
+      items.forEach((el) => el.classList.remove('on'));
+      if (!on) return;
+      const play = () => {
+        const t = [];
+        items.forEach((el) => {
+          el.classList.remove('on');
+          t.push(setTimeout(() => el.classList.add('on'), Number(el.dataset.at)));
+          if (el.dataset.off) t.push(setTimeout(() => el.classList.remove('on'), Number(el.dataset.off)));
+        });
+        if (root.dataset.loop) t.push(setTimeout(play, Number(root.dataset.loop)));
+        tlTimers.set(root, t);
+      };
+      play();
+    });
+  }
+  // 打印 / 导出 PDF 时直接显示时间轴的最终状态
+  addEventListener('beforeprint', () => {
+    tlTimers.forEach((t) => t.forEach(clearTimeout));
+    document.querySelectorAll('[data-tl] [data-at]').forEach((el) => el.classList.toggle('on', !el.dataset.off));
+  });
 
   $('prev').onclick = () => go(current - 1);
   $('next').onclick = () => go(current + 1);
@@ -56,18 +84,24 @@
     dlg.classList.remove('full'); dlg.scrollTo(0, 0); dlg.showModal();
   }
   document.querySelectorAll('[data-zoom]').forEach((el) =>
-    el.addEventListener('click', () => zoom(el.querySelector('img.on') || el.querySelector('img')))
+    el.addEventListener('click', () => {
+      const on = el.querySelector('.shots > .on');
+      const img = on ? (on.tagName === 'IMG' ? on : null) : el.querySelector('img');
+      if (img) zoom(img);
+    })
   );
 
   // galleries
   document.querySelectorAll('.gallery').forEach((g) => {
     const tabs = [...g.querySelectorAll('.tabs button')];
-    const imgs = [...g.querySelectorAll('.shots img')];
+    const panes = [...g.querySelectorAll('.shots > *')];
     const wt = g.querySelector('.wt');
+    const win = g.querySelector('.win');
     tabs.forEach((t, i) => (t.onclick = () => {
       tabs.forEach((x, j) => x.setAttribute('aria-selected', String(i === j)));
-      imgs.forEach((x, j) => x.classList.toggle('on', i === j));
-      if (wt) wt.textContent = imgs[i].dataset.file;
+      panes.forEach((x, j) => x.classList.toggle('on', i === j));
+      if (wt) wt.textContent = panes[i].dataset.file;
+      win.classList.toggle('nozoom', panes[i].tagName !== 'IMG');
     }));
   });
 
