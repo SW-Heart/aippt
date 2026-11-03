@@ -90,5 +90,56 @@
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(current + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
+  // 封面流水线：研究件沿传送带依次穿过 4 个工位，每过一个工位就变形一次（? → ∑ → ∫ → ✓ → ∎）
+  document.querySelectorAll('svg.pipe').forEach((svg) => {
+    const NS = 'http://www.w3.org/2000/svg';
+    const layer = svg.querySelector('.pl-tokens');
+    const counter = svg.querySelector('.pl-count');
+    const sts = [...svg.querySelectorAll('.pl-st')].map((g) => ({ g, x: Number(g.dataset.x) }));
+    const slide = svg.closest('.slide');
+    const GLYPH = ['?', '∑', '∫', '✓', '∎'];
+    const SPEED = 110, GAP = 1.9, END = 1330;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let toks = [], spawn = 0, last = 0, done = 0;
+    const stageOf = (x) => sts.filter((s) => x > s.x).length;
+    function make(x) {
+      const g = document.createElementNS(NS, 'g');
+      g.innerHTML = '<rect x="-14" y="-16" width="28" height="32" rx="5"/><text y="6"></text>';
+      layer.append(g);
+      const tk = { g, x, s: -1, t: g.querySelector('text') };
+      place(tk);
+      return tk;
+    }
+    function place(tk) {
+      const s = stageOf(tk.x);
+      if (s !== tk.s) { tk.s = s; tk.g.setAttribute('class', 'pl-tok s' + s); tk.t.textContent = GLYPH[s]; }
+      tk.g.setAttribute('transform', `translate(${tk.x.toFixed(1)} 160)`);
+    }
+    for (let x = END - 40; x > -20; x -= SPEED * GAP) toks.push(make(x));
+    function frame(now) {
+      requestAnimationFrame(frame);
+      const dt = Math.min(0.05, (now - last) / 1000 || 0);
+      last = now;
+      if (!slide.classList.contains('active') || document.hidden) return;
+      const v = reduced ? SPEED * 0.3 : SPEED;
+      spawn += dt * v;
+      if (spawn > SPEED * GAP) { spawn = 0; toks.push(make(-20)); }
+      const on = new Set();
+      toks = toks.filter((tk) => {
+        tk.x += v * dt;
+        if (tk.x > END) {
+          tk.g.remove();
+          counter.textContent = String(++done).padStart(3, '0');
+          return false;
+        }
+        place(tk);
+        sts.forEach((s, i) => { if (Math.abs(tk.x - s.x) < 54) on.add(i); });
+        return true;
+      });
+      sts.forEach((s, i) => s.g.classList.toggle('on', on.has(i)));
+    }
+    requestAnimationFrame(frame);
+  });
+
   go(Number(location.hash.slice(1) || 1) - 1);
 })();

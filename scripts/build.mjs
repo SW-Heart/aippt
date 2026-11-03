@@ -37,8 +37,10 @@ const ICONS = {
 const ico = (k) => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[k]}"/></svg>`;
 
 // ---------- 组件 ----------
-const SECTIONS = ['', '问题与方案', '提出问题', '自主探索', '人机协作', '验证交付'];
+const SECTIONS = ['', '问题与方案', '工位 01 · 提出问题', '工位 02 · 自主探索', '工位 03 · 人机协作', '工位 04 · 验证交付'];
 const rv = (i) => `rv d${i}`;
+const STAGES = ['提出问题', '自主探索', '人机协作', '验证交付'];
+const kick = (n) => `<p class="kicker stagek ${rv(0)}"><span class="seg">${STAGES.map((_, i) => `<i class="${i + 1 < n ? 'past' : i + 1 === n ? 'on' : ''}"></i>`).join('')}</span>流水线 · 工位 0${n}<b>${STAGES[n - 1]}</b></p>`;
 
 async function gallery(items, { tabs = true, height } = {}) {
   const imgs = await Promise.all(items.map(async ([name, label, opts = {}], i) =>
@@ -56,27 +58,66 @@ async function gallery(items, { tabs = true, height } = {}) {
 const slides = [];
 const add = (name, sec, body, { dark = false, desc = '' } = {}) => slides.push({ name, sec, body, dark, desc });
 
+// 01 封面：自动化科研流水线（研究件沿传送带经过 4 个工位，逐步变形；JS 驱动见 src/deck.js）
+const STATIONS = [
+  ['提出问题', '目标 · 约束 · 验证方式', 'INPUT'],
+  ['自主探索', '多 Agent 并行 · 数十天运行', 'EXPLORE'],
+  ['人机协作', '关键节点 @ 研究者审核', 'REVIEW'],
+  ['验证交付', 'Lean4 检查 · 论文与复现', 'VERIFY'],
+];
+const MX = [170, 490, 810, 1130];
+function stationScreen(i, x) {
+  const L = x - 64, T = 80;
+  if (i === 0) return [0, 1, 2].map((k) => `<rect class="pl-type" style="--k:${k}" x="${L}" y="${T + k * 14}" width="${[80, 96, 56][k]}" height="6" rx="3"/>`).join('')
+    + `<text class="pl-big" x="${x + 46}" y="${T + 30}" text-anchor="middle">?</text>`;
+  if (i === 1) {
+    const ends = [[x - 8, T - 2], [x - 8, T + 16], [x - 8, T + 34], [x + 44, T - 6], [x + 44, T + 10], [x + 44, T + 30], [x + 44, T + 42]];
+    const par = [[L, T + 16], [L, T + 16], [L, T + 16], ends[0], ends[0], ends[1], ends[2]];
+    return ends.map(([ex, ey], k) => `<path class="pl-br" d="M${par[k][0]} ${par[k][1]}C${par[k][0] + 30} ${par[k][1]} ${ex - 30} ${ey} ${ex} ${ey}"/>`).join('')
+      + `<circle class="pl-nd root" cx="${L}" cy="${T + 16}" r="4"/>` + ends.map(([ex, ey], k) => `<circle class="pl-nd ${k === 4 ? 'ok' : ''}" style="--k:${k}" cx="${ex}" cy="${ey}" r="3.5"/>`).join('');
+  }
+  if (i === 2) return [0, 1, 2].map((k) => `<rect class="pl-box" x="${L}" y="${T - 4 + k * 15}" width="9" height="9" rx="2"/><path class="pl-tick" style="--k:${k}" d="M${L + 2} ${T + 1 + k * 15}l2 2 4-4"/><rect class="pl-ln" x="${L + 16}" y="${T - 1 + k * 15}" width="${[70, 54, 76][k]}" height="4" rx="2"/>`).join('')
+    + `<circle class="pl-at" cx="${x + 46}" cy="${T + 14}" r="17"/><text class="pl-atx" x="${x + 46}" y="${T + 20}" text-anchor="middle">@</text>`;
+  return `<text class="pl-mono" x="${L}" y="${T + 4}">lake build</text><text class="pl-mono ok" x="${x + 64}" y="${T + 4}" text-anchor="end">61/61</text>
+    <rect class="pl-bar-bg" x="${L}" y="${T + 14}" width="128" height="6" rx="3"/><rect class="pl-bar" x="${L}" y="${T + 14}" width="128" height="6" rx="3"/>
+    <text class="pl-mono" x="${L}" y="${T + 38}">sha256 ✓  pdf ✓</text>`;
+}
+const pipelineSvg = `<svg class="pipe" viewBox="0 0 1296 262" aria-label="自动化科研流水线动画">
+  <text class="pl-head" x="0" y="12">AUTOMATED RESEARCH PIPELINE</text><circle class="pl-live" cx="250" cy="8" r="4"/><text class="pl-head dim" x="262" y="12">运行中</text>
+  <text class="pl-head dim" x="1248" y="12" text-anchor="end">已交付成果</text><text class="pl-count" x="1296" y="13" text-anchor="end">000</text>
+  <g class="pl-belt"><rect x="0" y="176" width="1296" height="12" rx="6"/><path class="pl-dash" d="M8 182H1288"/>
+    ${Array.from({ length: 27 }, (_, k) => `<circle class="pl-roll" cx="${12 + k * 49.3}" cy="196" r="4"/>`).join('')}</g>
+  <g class="pl-tokens"></g>
+  ${MX.map((x, i) => `<g class="pl-st" data-x="${x}">
+    <rect class="pl-body" x="${x - 88}" y="36" width="176" height="140" rx="14"/>
+    <rect class="pl-tunnel" x="${x - 40}" y="142" width="80" height="34" rx="6"/>
+    <rect class="pl-scan" x="${x - 40}" y="142" width="80" height="3" rx="1.5"/>
+    <rect class="pl-screen" x="${x - 76}" y="50" width="152" height="84" rx="8"/>
+    <text class="pl-tag" x="${x - 66}" y="66">0${i + 1} · ${STATIONS[i][2]}</text><circle class="pl-led" cx="${x + 64}" cy="62" r="3.5"/>
+    <g class="pl-vis v${i}">${stationScreen(i, x)}</g>
+    <text class="pl-name" x="${x}" y="226" text-anchor="middle">${STATIONS[i][0]}</text>
+    <text class="pl-sub" x="${x}" y="250" text-anchor="middle">${STATIONS[i][1]}</text>
+  </g>`).join('')}
+</svg>`;
+
 // 01 封面 ---------------------------------------------------------------
 add('封面', 0, `
 <div class="content cover">
-  <div style="position:absolute;left:0;top:70px;width:560px">
+  <div style="position:absolute;left:0;top:10px;width:560px">
     <p class="kicker ${rv(0)}">AI Research Agent · 面向数学研究</p>
     <h1 class="title ${rv(1)}">矩阵工坊</h1>
     <p class="sub ${rv(2)}">构建科学发现的流水线</p>
     <p class="lead ${rv(3)}">让 AI 持续检索、探索、计算与验证，<br>让研究者专注于提出问题、判断方向。</p>
   </div>
   <button class="shot ${rv(2)}" data-zoom aria-label="放大查看产品主页"><img src="${await asset('product.png')}" alt="矩阵工坊产品主页"></button>
-  <div class="flow">
-    ${[['提出问题', '定义目标、约束与验证方式'], ['自主探索', '长周期运行，多路径并行尝试'], ['人机把关', '进度可见，关键节点人工审核'], ['验证交付', 'Lean4 检查，论文与复现材料']]
-      .map(([t, d], i) => `<div class="st" style="--i:${i}"><span class="num">0${i + 1}</span><b>${t}</b><span>${d}</span></div>`).join('')}
-  </div>
+  ${pipelineSvg}
 </div>`, { dark: true, desc: '构建科学发现的流水线' });
 
 // 02 问题 ---------------------------------------------------------------
 add('AI 科研的最后一公里', 1, `
 <div class="content">
   <div class="head">
-    <p class="kicker ${rv(0)}">01 · 问题</p>
+    <p class="kicker ${rv(0)}">问题</p>
     <h2 class="${rv(1)}">通用 AI 已经很强，<span class="hl">但科研不止一次对话</span></h2>
     <p class="lead ${rv(2)}">直接使用 Codex、Claude 等通用 Agent，模型能力已经足够；但让它真正产出科研成果，配套环节仍需研究者自己搭建。</p>
   </div>
@@ -142,7 +183,8 @@ add('一条流水线', 1, `
 <div class="content">
   <div class="head">
     <p class="kicker ${rv(0)}">产品全景</p>
-    <h2 class="${rv(1)}">一条流水线，从研究问题到<span class="hl">可验证的成果</span></h2>
+    <h2 class="${rv(1)}">把科研变成一条<span class="hl">自动化流水线</span></h2>
+    <p class="lead ${rv(1)}">四个工位首尾相接：研究问题从一端投入，可验证的成果从另一端产出。</p>
   </div>
   <div class="lanes">
     ${lanes.map(([t, d, items], i) => `<div class="lane ${rv(2 + i)}"><div class="dot">0${i + 1}</div><h3>${t}</h3><p>${d}</p>
@@ -155,43 +197,104 @@ add('一条流水线', 1, `
 </div>`);
 
 // 05 定义研究问题 ----------------------------------------------------------
+const dispatchSvg = `<svg viewBox="0 0 680 176" aria-label="课题投入流水线并拆解为研究分支">
+  <g class="node root" style="--d:1.5s"><rect x="0" y="66" width="104" height="44" rx="10"/><text x="52" y="93" text-anchor="middle">OPE-88</text></g>
+  <path class="edge" style="--len:400;--d:1.8s" d="M104 88H196"/>
+  <g class="node" style="--d:2s"><rect class="hub" x="196" y="66" width="112" height="44" rx="10"/><text class="hubt" x="252" y="93" text-anchor="middle">监督者</text></g>
+  ${['分支 A · 证明路径探索', '分支 B · 计算实验与反例', '分支 C · Lean4 形式化', '分支 D · 论文材料整理'].map((t, k) => {
+    const y = 4 + k * 46;
+    return `<path class="edge" style="--len:400;--d:${2.3 + k * .15}s" d="M308 88C360 88 368 ${y + 17} 420 ${y + 17}"/>
+    <g class="node" style="--d:${2.6 + k * .15}s"><rect class="chipr" x="420" y="${y}" width="260" height="34" rx="8"/><circle class="chipd" cx="438" cy="${y + 17}" r="4"/><text x="452" y="${y + 22}">${t}</text></g>
+    <g class="node" style="--d:3.4s"><circle class="flowdot" r="3.5"><animateMotion dur="${1.6 + k * .2}s" repeatCount="indefinite" path="M308 88C360 88 368 ${y + 17} 420 ${y + 17}"/></circle></g>`;
+  }).join('')}
+</svg>`;
 add('定义研究问题', 2, `
 <div class="content">
-  <div class="row" style="gap:56px;height:100%">
-    <div style="flex:0 0 560px">
-      <p class="kicker ${rv(0)}">02 · 提出问题</p>
+  <div class="row" style="gap:48px;height:100%;align-items:stretch">
+    <div style="flex:0 0 590px;display:flex;flex-direction:column">
+      ${kick(1)}
       <h2 class="${rv(1)}">从一个<span class="hl">边界清晰</span>的<br>研究问题开始</h2>
-      <p class="lead ${rv(2)}" style="margin-bottom:28px">写清目标、已有材料、约束与验证方式，Agent 才能长时间自主推进而不跑偏。</p>
-      <div class="tasks">
-        ${[['search', '猜想与证明路径探索', '尝试候选思路，推进研究论证'], ['flask', '计算实验与反例搜索', '检验特殊情形与候选结论'], ['check', '已有推导的形式化验证', '将证明整理为机器可检查的文件'], ['file', '论文与证明材料整理', '归纳研究过程与阶段结果']]
-          .map(([k, t, d], i) => `<div class="t ${rv(3 + i)}">${ico(k)}<div><b>${t}</b><span>${d}</span></div></div>`).join('')}
+      <p class="lead ${rv(2)}">写清目标、已有材料、约束与验证方式——这是投入流水线的“原料规格”，决定了 Agent 能否长时间自主推进而不跑偏。</p>
+      <p class="num ${rv(3)}" style="margin:auto 0 14px">适合投入流水线的研究任务</p>
+      <div class="tasks2">
+        ${[['search', '猜想与证明路径探索', '尝试候选思路，推进研究论证'], ['flask', '计算实验与反例搜索', '检验特殊情形与候选结论'], ['check', '已有推导的形式化验证', '整理为机器可检查的 Lean4 文件'], ['file', '论文与证明材料整理', '归纳研究过程与阶段结果']]
+          .map(([k, t, d], i) => `<div class="t ${rv(4 + i)}">${ico(k)}<b>${t}</b><span>${d}</span></div>`).join('')}
       </div>
     </div>
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:20px">
-      <div class="ticket ${rv(3)}">
+    <div style="flex:1;display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div class="ticket ${rv(2)}">
         <div class="tb"><span class="tag lime">课题</span><b>Wilson 定理：完整证明与形式化</b><span style="margin-left:auto">OPE-88</span></div>
         <dl>
-          <div><dt>研究问题</dt><dd>对任意整数 n &gt; 1，<span class="math">n 为素数 ⇔ (n − 1)! ≡ −1 (mod n)</span></dd></div>
-          <div><dt>已有材料</dt><dd>原始证明、论文草稿与计算代码</dd></div>
-          <div><dt>约束条件</dt><dd>两个方向均需独立证明，不调用 Mathlib 中现成的 Wilson 定理</dd></div>
-          <div><dt>验证方式</dt><dd>Python / SageMath 计算核对 + Lean4 形式化检查</dd></div>
-          <div><dt>预期交付</dt><dd>论文 PDF、Lean 工程、可复现代码包</dd></div>
-          <div><dt>负责人</dt><dd>研究者 · 关键节点 @ 审核</dd></div>
+          ${[['研究问题', '对任意整数 n &gt; 1，<span class="math">n 为素数 ⇔ (n − 1)! ≡ −1 (mod n)</span>'], ['已有材料', '原始证明、论文草稿与计算代码'], ['约束条件', '两个方向独立证明，不调用 Mathlib 现成的 Wilson 定理'], ['验证方式', 'Python / SageMath 计算核对 + Lean4 形式化检查'], ['预期交付', '论文 PDF、Lean 工程、可复现代码包'], ['负责人', '研究者 · 关键节点 @ 审核']]
+            .map(([k, v], i) => `<div class="tf" style="--k:${i}"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}
         </dl>
       </div>
-      <p class="note" style="margin-top:12px">示例课题：Wilson 定理为经典结果，此处用于完整展示流程。</p>
+      <div class="dispatch ${rv(3)}">
+        <div class="dh"><span class="mono">投入流水线 → 自动拆解为研究分支</span><span class="note">示例：Wilson 定理为经典结果，用于完整展示流程</span></div>
+        <div class="tree">${dispatchSvg}</div>
+      </div>
     </div>
   </div>
 </div>`);
 
+
 // 06 科研环境 -------------------------------------------------------------
+const mv = (path, dur, begin = 0, cls = 'flowdot') => `<circle class="${cls}" r="3"><animateMotion dur="${dur}s" begin="${begin}s" repeatCount="indefinite" path="${path}"/></circle>`;
+const tools = [['py', 'Python'], ['sage', 'SageMath'], ['∀', 'Lean4'], ['TeX', 'LaTeX'], ['⌕', '学术检索']];
+const sandboxSvg = `<svg class="sbx" viewBox="0 0 700 600" aria-label="课题沙盒架构">
+  <rect class="sbx-frame" x="1" y="1" width="698" height="598" rx="18"/>
+  <path class="sbx-rule" d="M1 48H699"/>
+  <circle cx="24" cy="24" r="5" class="sbx-dot"/><circle cx="40" cy="24" r="5" class="sbx-dot"/><circle cx="56" cy="24" r="5" class="sbx-dot"/>
+  <text class="sbx-mono" x="76" y="29">sandbox://ope-88 · isolated</text>
+  <rect class="sbx-pill" x="586" y="13" width="96" height="22" rx="11"/><circle class="sbx-live" cx="600" cy="24" r="3.5"/><text class="sbx-pillt" x="644" y="28" text-anchor="middle">RUNNING</text>
+
+  <!-- L1 models -->
+  <text class="sbx-lab" x="24" y="78">MODELS · 模型路由</text>
+  <rect class="sbx-chip dk" x="24" y="90" width="110" height="40" rx="9"/><text class="sbx-chipt w" x="79" y="115" text-anchor="middle">GPT</text>
+  <rect class="sbx-chip dk" x="144" y="90" width="110" height="40" rx="9"/><text class="sbx-chipt w" x="199" y="115" text-anchor="middle">Claude</text>
+  <rect class="sbx-chip dash" x="264" y="90" width="120" height="40" rx="9"/><text class="sbx-chipt" x="324" y="115" text-anchor="middle">更多模型…</text>
+  <text class="sbx-note" x="516" y="115" text-anchor="end">按任务自由切换</text>
+  <path class="sbx-wire" d="M199 130V178M79 130V150H199M324 130V150H199"/>
+  ${mv('M199 130V178', 1.4)}${mv('M79 130V150H199V178', 2)}
+
+  <!-- L2 agents -->
+  <text class="sbx-lab" x="24" y="174">AGENTS · 编排层</text>
+  <rect class="sbx-box" x="24" y="182" width="504" height="112" rx="12"/>
+  <path class="sbx-wire" d="M214 238H132M214 238C180 238 170 262 132 262M334 238H416M334 238C368 238 378 262 416 262M214 238C180 238 170 214 132 214M334 238C368 238 378 214 416 214"/>
+  ${mv('M214 238C180 238 170 214 132 214', 1.6)}${mv('M132 262C170 262 180 238 214 238', 1.9, .4)}${mv('M334 238C368 238 378 214 416 214', 1.7, .2)}${mv('M416 262C378 262 368 238 334 238', 2.1, .7)}
+  <rect class="sbx-hub" x="214" y="218" width="120" height="40" rx="10"/><text class="sbx-hubt" x="274" y="243" text-anchor="middle">监督者</text>
+  ${[['探索 Agent A', 40, 199], ['探索 Agent B', 40, 247], ['探索 Agent C', 416, 199], ['审稿 Agent', 416, 247]].map(([t, x, y]) => `<rect class="sbx-ag" x="${x}" y="${y}" width="96" height="30" rx="8"/><text class="sbx-agt" x="${x + 48}" y="${y + 20}" text-anchor="middle">${t}</text>`).join('')}
+
+  <!-- L3 tools -->
+  <text class="sbx-lab" x="24" y="324">TOOLS · 工具链</text>
+  ${tools.map(([g, n], k) => { const x = 24 + k * 103; return `${k ? `<path class="sbx-wire" d="M${x + 46} 294V334"/>${mv(`M${x + 46} 294V334`, 1.2 + k * .17, k * .3)}` : ''}
+    <rect class="sbx-tile" x="${x}" y="334" width="92" height="74" rx="10"/><text class="sbx-glyph" x="${x + 46}" y="368" text-anchor="middle">${g}</text><text class="sbx-tn" x="${x + 46}" y="394" text-anchor="middle">${n}</text>`; }).join('')}
+
+  <!-- L4 compute -->
+  <text class="sbx-lab" x="24" y="438">COMPUTE · GPU</text>
+  ${Array.from({ length: 8 }, (_, k) => { const x = 24 + k * 64.6; const vals = ['38;52;30', '20;48;44', '50;28;54', '30;54;40', '44;24;50', '26;46;34', '52;36;22', '34;20;48'][k]; const ys = vals.split(';').map((v) => 512 - v).join(';');
+    return `<rect class="sbx-gpu" x="${x}" y="448" width="54" height="84" rx="7"/><rect class="sbx-meter" x="${x + 21}" y="458" width="12" height="54" rx="3"/>
+    <rect class="sbx-fill" x="${x + 21}" y="474" width="12" height="38" rx="3"><animate attributeName="height" values="${vals};${vals.split(';')[0]}" dur="${2.4 + k * .3}s" repeatCount="indefinite"/><animate attributeName="y" values="${ys};${ys.split(';')[0]}" dur="${2.4 + k * .3}s" repeatCount="indefinite"/></rect>
+    <text class="sbx-gt" x="${x + 27}" y="526" text-anchor="middle">GPU${k}</text>`; }).join('')}
+  <text class="sbx-note" x="24" y="572">无需本地安装 · 打开即用 · 每个课题独立运行</text>
+
+  <!-- data band -->
+  <rect class="sbx-data" x="548" y="64" width="130" height="476" rx="12"/>
+  <g transform="translate(597 92)" class="sbx-lock"><rect x="2" y="13" width="28" height="22" rx="4"/><path d="M8 13V9a8 8 0 0 1 16 0v4"/><circle cx="16" cy="24" r="2.5"/></g>
+  <text class="sbx-dl" x="613" y="158" text-anchor="middle">DATA</text>
+  <text class="sbx-dt" x="613" y="184" text-anchor="middle">课题数据</text><text class="sbx-dt" x="613" y="206" text-anchor="middle">隔离存储</text>
+  ${[0, 1, 2, 3].map((k) => `<rect class="sbx-file" x="${578 + (k % 2) * 36}" y="${248 + Math.floor(k / 2) * 46}" width="28" height="36" rx="4"/><path class="sbx-fl" d="M${584 + (k % 2) * 36} ${262 + Math.floor(k / 2) * 46}h16M${584 + (k % 2) * 36} ${270 + Math.floor(k / 2) * 46}h12"/>`).join('')}
+  <text class="sbx-dm" x="613" y="372" text-anchor="middle">proofs/</text><text class="sbx-dm" x="613" y="392" text-anchor="middle">papers/</text><text class="sbx-dm" x="613" y="412" text-anchor="middle">logs/</text>
+  <text class="sbx-dt s" x="613" y="500" text-anchor="middle">不出沙盒</text><text class="sbx-dm" x="613" y="520" text-anchor="middle">per-project</text>
+  ${[110, 238, 371, 490].map((y, k) => `<path class="sbx-wire dashw" d="M528 ${y}H548"/>${mv(`M528 ${y}H548`, 1, k * .25, 'flowdot lime')}`).join('')}
+</svg>`;
 add('科研环境', 3, `
 <div class="content">
-  <div class="row" style="gap:64px;height:100%">
-    <div style="flex:0 0 520px">
-      <p class="kicker ${rv(0)}">03 · 自主探索</p>
+  <div class="row" style="gap:56px;height:100%">
+    <div style="flex:0 0 470px">
+      ${kick(2)}
       <h2 class="${rv(1)}">科研环境，<span class="hl">打开即用</span></h2>
-      <p class="lead ${rv(2)}" style="margin-bottom:40px">软件、算力与模型已就绪，研究者直接进入课题，不必先当运维。</p>
+      <p class="lead ${rv(2)}" style="margin-bottom:40px">流水线的“车间”已经搭好：软件、算力与模型就绪，研究者直接进入课题，不必先当运维。</p>
       <div class="points">
         <div class="point ${rv(3)}"><h3>独立云端沙盒</h3><p>无需本地预装，每个课题在独立环境中运行</p></div>
         <div class="point ${rv(4)}"><h3>高性能 GPU 计算</h3><p>为计算密集的研究任务提供算力</p></div>
@@ -199,18 +302,10 @@ add('科研环境', 3, `
         <div class="point ${rv(6)}"><h3>研究数据隐私隔离</h3><p>课题数据仅在所属环境内流转</p></div>
       </div>
     </div>
-    <div style="flex:1;padding-top:40px">
-      <div class="sandbox ${rv(3)}">
-        <div class="label">${ico('lock')} SANDBOX · 课题独立环境</div>
-        <div class="layer"><span class="ln">模型</span><div class="chips"><span class="chip dark">GPT</span><span class="chip dark">Claude</span><span class="chip">更多模型…</span></div></div>
-        <div class="layer"><span class="ln">Agent</span><div class="chips"><span class="chip lime">监督者</span><span class="chip lime">探索 Agent ×N</span><span class="chip lime">审稿 Agent</span></div></div>
-        <div class="layer"><span class="ln">工具链</span><div class="chips"><span class="chip">Python</span><span class="chip">SageMath</span><span class="chip">Lean4 + Mathlib</span><span class="chip">LaTeX</span><span class="chip">学术检索</span></div></div>
-        <div class="layer"><span class="ln">算力</span><div class="gpu">${Array.from({ length: 8 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div><span></span></div>
-        <div class="layer"><span class="ln">数据</span><div class="chips"><span class="chip">${ico('shield').replace('class="ico"', 'class="ico" style="width:16px;height:16px;vertical-align:-3px"')} 课题数据隔离存储</span></div></div>
-      </div>
-    </div>
+    <div class="${rv(3)}" style="flex:1;min-width:0;margin-top:-6px">${sandboxSvg}</div>
   </div>
 </div>`);
+
 
 // 07 长周期探索 -----------------------------------------------------------
 const edge = (x1, y1, x2, y2, d, cls = '') => `<path class="edge ${cls}" style="--len:400;--d:${d}s" d="M${x1} ${y1}C${x1 + 70} ${y1} ${x2 - 70} ${y2} ${x2} ${y2}"/>`;
@@ -236,7 +331,7 @@ add('长周期探索', 3, `
 <div class="content">
   <div class="row" style="gap:48px;height:100%">
     <div style="flex:0 0 520px">
-      <p class="kicker ${rv(0)}">03 · 自主探索</p>
+      ${kick(2)}
       <h2 class="${rv(1)}">长时间运行，<br><span class="hl">持续推进研究</span></h2>
       <div class="bignum ${rv(2)}" style="margin:30px 0 8px">几十<small>天</small></div>
       <p class="${rv(3)}" style="font-size:17px;color:var(--ink-2);margin:14px 0 30px">单个课题可连续运行，不因对话结束而中断</p>
@@ -265,7 +360,7 @@ const term = [
 add('专业工具', 3, `
 <div class="content">
   <div class="head">
-    <p class="kicker ${rv(0)}">03 · 自主探索</p>
+    ${kick(2)}
     <h2 class="${rv(1)}">专业工具，<span class="hl">贯穿探索全程</span></h2>
     <p class="lead ${rv(2)}">学术检索提供依据，计算实验检验思路——文献证据与实验结果沉淀在同一个课题里。</p>
   </div>
@@ -290,7 +385,7 @@ const sidePoints = (arr, start = 3) => `<div class="points">${arr.map(([t, d], i
 add('协作看板', 4, `
 <div class="content">
   <div class="head">
-    <p class="kicker ${rv(0)}">04 · 人机协作</p>
+    ${kick(3)}
     <h2 class="${rv(1)}">研究者与 Agent，<span class="hl">在同一块看板上协作</span></h2>
   </div>
   <div class="row" style="margin-top:30px;height:520px;gap:44px">
@@ -305,7 +400,7 @@ add('协作看板', 4, `
 add('进度与审核', 4, `
 <div class="content">
   <div class="head">
-    <p class="kicker ${rv(0)}">04 · 人机协作</p>
+    ${kick(3)}
     <h2 class="${rv(1)}">探索过程可见，<span class="hl">关键节点有人把关</span></h2>
   </div>
   <div class="row" style="margin-top:22px;height:560px;gap:44px">
@@ -325,7 +420,7 @@ add('Lean4 形式化验证', 5, `
 <div class="content">
   <div class="row" style="gap:52px;height:100%">
     <div style="flex:0 0 520px">
-      <p class="kicker ${rv(0)}">05 · 验证交付</p>
+      ${kick(4)}
       <h2 class="${rv(1)}">Lean4 形式化验证，<br><span class="hl">让证明经得起机器检查</span></h2>
       <p class="lead ${rv(2)}" style="margin-bottom:30px">自建并预编译 Lean4 库，逐项检查证明义务，交付可在全新目录独立复现的工程。</p>
       <div class="stats ${rv(3)}">
@@ -347,7 +442,7 @@ add('Lean4 形式化验证', 5, `
 add('论文与复现', 5, `
 <div class="content">
   <div class="head">
-    <p class="kicker ${rv(0)}">05 · 验证交付</p>
+    ${kick(4)}
     <h2 class="${rv(1)}">每次交付，都<span class="hl">可查看、可复现</span></h2>
   </div>
   <div class="row" style="margin-top:22px;height:560px;gap:40px">
@@ -372,7 +467,7 @@ add('论文与复现', 5, `
 add('完整任务总结', 5, `
 <div class="content">
   <div class="head">
-    <p class="kicker ${rv(0)}">05 · 验证交付</p>
+    ${kick(4)}
     <h2 class="${rv(1)}">完整任务总结，<span class="hl">研究过程可追溯</span></h2>
   </div>
   <div class="row" style="margin-top:30px;height:540px;gap:44px">
@@ -387,20 +482,48 @@ add('完整任务总结', 5, `
   </div>
 </div>`);
 
-// 14 机构申请 -------------------------------------------------------------
+// 14 机构申请：持续运转的科研流水线闭环（纯 SVG/SMIL 动画）
+const T = 9, CX = 300, CY = 220, R = 160;
+const loopNodes = [['提出问题', 0], ['自主探索', 90], ['人机协作', 180], ['验证交付', 270]];
+const ringPath = `M${CX} ${CY - R}A${R} ${R} 0 1 1 ${CX} ${CY + R}A${R} ${R} 0 1 1 ${CX} ${CY - R}`;
+const loopSvg = `<svg class="loop" viewBox="0 0 600 440" aria-label="持续运转的科研流水线">
+  <defs><radialGradient id="lg"><stop offset="0" stop-color="#CDF55A" stop-opacity=".35"/><stop offset="1" stop-color="#CDF55A" stop-opacity="0"/></radialGradient></defs>
+  <circle cx="${CX}" cy="${CY}" r="120" fill="url(#lg)" opacity=".5"/>
+  <g class="loop-rot"><circle cx="${CX}" cy="${CY}" r="${R + 34}" class="loop-outer"/></g>
+  <g class="loop-rot rev"><circle cx="${CX}" cy="${CY}" r="${R - 42}" class="loop-inner"/></g>
+  ${Array.from({ length: 72 }, (_, k) => { const a = k / 72 * Math.PI * 2; const r1 = R + 14, r2 = R + (k % 6 ? 18 : 24); return `<path class="loop-tick" d="M${(CX + Math.cos(a) * r1).toFixed(1)} ${(CY + Math.sin(a) * r1).toFixed(1)}L${(CX + Math.cos(a) * r2).toFixed(1)} ${(CY + Math.sin(a) * r2).toFixed(1)}"/>`; }).join('')}
+  <path class="loop-ring" d="${ringPath}"/>
+  ${[0, 1, 2].map((k) => `<g><circle r="16" fill="url(#lg)"/><circle r="5.5" class="loop-p"/><animateMotion dur="${T}s" begin="${-k * T / 3}s" repeatCount="indefinite" path="${ringPath}"/></g>`).join('')}
+  ${loopNodes.map(([t, deg], i) => {
+    const a = (deg - 90) * Math.PI / 180, x = CX + Math.cos(a) * R, y = CY + Math.sin(a) * R;
+    const phase = ((deg / 360) * T) % (T / 3);
+    const lx = x + Math.cos(a) * 52, ly = y + Math.sin(a) * 52 + 6;
+    const anchor = Math.abs(Math.cos(a)) < .1 ? 'middle' : Math.cos(a) > 0 ? 'start' : 'end';
+    return `<circle cx="${x}" cy="${y}" r="27" class="loop-node"/>
+      <circle cx="${x}" cy="${y}" r="27" class="loop-flash" opacity="0"><animate attributeName="opacity" values="1;0;0" keyTimes="0;.45;1" dur="${T / 3}s" begin="${phase.toFixed(2)}s" repeatCount="indefinite"/></circle>
+      <text x="${x}" y="${y + 5}" class="loop-n" text-anchor="middle">0${i + 1}</text>
+      <text x="${(anchor === 'middle' ? x : x + Math.cos(a) * 46).toFixed(1)}" y="${(anchor === 'middle' ? ly : y + 6).toFixed(1)}" class="loop-l" text-anchor="${anchor}">${t}</text>`;
+  }).join('')}
+  <text x="${CX}" y="${CY - 34}" class="loop-k" text-anchor="middle">DISCOVERY LOOP</text>
+  <text x="${CX}" y="${CY + 22}" class="loop-big" text-anchor="middle">7×24</text>
+  <text x="${CX}" y="${CY + 54}" class="loop-s" text-anchor="middle">流水线持续运转</text>
+</svg>`;
 add('机构申请', 0, `
 <div class="content closing">
   <p class="kicker ${rv(0)}" style="margin-top:20px">Thank you</p>
   <h1 class="title ${rv(1)}">构建科学发现的<br><em>流水线</em></h1>
-  <div class="${rv(2)}" style="margin:56px 0 0"><span class="badge"><i></i>目前仅面向科研机构开放申请</span></div>
+  <p class="lead ${rv(2)}" style="max-width:600px;margin-top:26px">问题从一端投入，经过验证的成果从另一端产出——<br>每一份成果，又成为下一个问题的起点。</p>
+  <div class="${rv(3)}" style="margin:34px 0 0"><span class="badge"><i></i>目前仅面向科研机构开放申请</span></div>
+  <div class="${rv(2)}" style="position:absolute;right:-10px;top:-24px;width:600px;height:440px">${loopSvg}</div>
   <div style="position:absolute;left:0;right:0;bottom:0">
-    <p class="num ${rv(3)}" style="color:var(--on-night-2);margin:0 0 16px">申请沟通时，建议准备</p>
+    <p class="num ${rv(4)}" style="color:var(--on-night-2);margin:0 0 16px">申请沟通时，建议准备</p>
     <div class="apply">
       ${[['机构与团队', '所属机构、团队规模与成员背景'], ['研究方向', '所在学科与重点关注领域'], ['拟探索课题', '希望交给 Agent 推进的具体问题'], ['算力需求', '预估计算规模与运行周期']]
-        .map(([t, d], i) => `<div class="${rv(4 + i)}"><span class="num">0${i + 1}</span><b>${t}</b><span>${d}</span></div>`).join('')}
+        .map(([t, d], i) => `<div class="${rv(5 + i)}"><span class="num">0${i + 1}</span><b>${t}</b><span>${d}</span></div>`).join('')}
     </div>
   </div>
 </div>`, { dark: true, desc: '目前仅支持机构申请使用' });
+
 
 // ---------- 组装 ----------
 const N = slides.length;
@@ -425,7 +548,6 @@ const html = `<!DOCTYPE html>
 <body>
 <main class="viewport"><div class="stage" id="stage">
 ${slides.map((s, i) => `<section class="slide ${s.dark ? 'dark' : ''}${i === 0 ? ' active' : ''}" id="slide-${i + 1}" data-name="${s.name}" aria-label="${s.name}" aria-hidden="${i !== 0}">
-<div class="chrome"><span class="brand"><span class="brand-mark">M</span>矩阵工坊 · MatFoundry</span>${sectionLabel(s.sec)}</div>
 ${s.body}
 <div class="pageno">${pad(i + 1)} / ${pad(N)}</div>
 </section>`).join('\n')}
