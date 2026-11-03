@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1400 350" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="AI 科研流水线示意">
+<defs>
+<linearGradient id="metal" x2="0" y2="1"><stop stop-color="#FDFDFF"/><stop offset="1" stop-color="#C9C5E4"/></linearGradient>
+<linearGradient id="side" x2="0" y2="1"><stop stop-color="#A49ACA"/><stop offset="1" stop-color="#655A91"/></linearGradient>
+<linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF" stop-opacity=".94"/><stop offset=".45" stop-color="#E6DFFF" stop-opacity=".35"/><stop offset="1" stop-color="#A18CE9" stop-opacity=".65"/></linearGradient>
+<linearGradient id="core" x2="1" y2="1"><stop stop-color="#D4BDFF"/><stop offset=".5" stop-color="#8A6ADD"/><stop offset="1" stop-color="#54428F"/></linearGradient>
+<linearGradient id="paper" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#EBE8F6"/></linearGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="9"/></filter>
+<filter id="glow"><feGaussianBlur stdDeviation="4"/></filter>
+<g id="doc"><path d="M0 0h31l13 13v43H0Z" fill="url(#paper)" stroke="#ADA1CE"/><path d="M31 0v13h13M9 25h25M9 32h25M9 39h17" stroke="#B3A8CC" stroke-width="2"/></g>
+</defs>
+<ellipse cx="700" cy="270" rx="625" ry="24" fill="#BBB3D5" opacity=".24" filter="url(#soft)"/>
+<!-- continuous belt -->
+<path d="M64 205 1257 205 1340 241 145 241Z" fill="#E9E5F4" stroke="#CDC5E2"/>
+<path d="M145 241h1195v25H145Z" fill="url(#side)"/><path d="M64 205 145 241v25l-81-35Z" fill="#BCB3D5"/>
+<path d="M96 213h1147l49 21H145Z" fill="#FDFBFF"/><path class="belt-dashes" d="M120 223h1150" stroke="#B8A9D5" stroke-width="3" stroke-dasharray="3 22"/>
+<path d="M165 265v17h30v-17m1020 0v17h30v-17" fill="#9589B3"/>
+<g fill="#D7D0EA" stroke="#8E80AF"><circle cx="183" cy="254" r="5"/><circle cx="216" cy="254" r="5"/><circle cx="249" cy="254" r="5"/><circle cx="282" cy="254" r="5"/><circle cx="1080" cy="254" r="5"/><circle cx="1113" cy="254" r="5"/><circle cx="1146" cy="254" r="5"/><circle cx="1179" cy="254" r="5"/></g>
+<!-- input tray and question sheets -->
+<path d="m88 163 126-18 49 37-128 20Z" fill="#E3DDEF" stroke="#BEB2D4"/><path d="m135 202 128-20v29l-128 19Z" fill="#C4B7D8"/>
+<g class="question-card" transform="translate(144 100) rotate(-12)"><use href="#doc"/><text x="21" y="32" text-anchor="middle" fill="#9474C6" font-family="Georgia" font-size="30">?</text></g>
+<g transform="translate(192 113) rotate(9)"><use href="#doc"/><path d="M8 26h26m-20-6v24" stroke="#AB8DCC" stroke-width="2"/></g>
+<!-- discovery chamber -->
+<path d="m367 195 181-18 77 33-181 21Z" fill="#F9F7FD" stroke="#BBB0D4"/><path d="m444 231 181-21v25l-181 22Z" fill="#B8A7D4"/><path d="m367 195 77 36v26l-77-37Z" fill="#D8CEE9"/>
+<path d="M391 78v110c0 45 181 45 181 0V78" fill="url(#glass)" stroke="#B5A5D1"/><ellipse cx="482" cy="78" rx="90" ry="29" fill="#F8F4FF" stroke="#C5B7DA"/>
+<ellipse cx="482" cy="78" rx="71" ry="20" fill="#E1D5F5"/><path d="M406 89v89" stroke="white" stroke-width="5" opacity=".8"/>
+<g class="research-orbit"><ellipse cx="482" cy="140" rx="68" ry="25" stroke="#A88AD4" transform="rotate(-22 482 140)"/><ellipse cx="482" cy="140" rx="68" ry="25" stroke="#B69ADD" transform="rotate(45 482 140)"/><circle cx="482" cy="140" r="28" fill="url(#core)"/><path d="m470 141 10 10 18-23" stroke="#F3EAFF" stroke-width="2.5"/><circle cx="427" cy="160" r="5" fill="#C1D67E"/><circle cx="538" cy="116" r="4" fill="#BD9BDA"/></g>
+<text class="formula f1" x="412" y="123" fill="#8A6AAE" font-size="17" font-family="Georgia">∑</text><text class="formula f2" x="534" y="176" fill="#8A6AAE" font-size="17" font-family="Georgia">f(x)</text>
+<path d="m467 226 79-9v16l-79 10Z" fill="#6F5A92"/><g class="machine-led" fill="#C9E68A"><circle cx="483" cy="231" r="2.5"/><circle cx="494" cy="230" r="2.5"/><circle cx="505" cy="229" r="2.5"/></g>
+<!-- verification arch -->
+<path d="m752 198 147-18 72 32-149 20Z" fill="#FCFAFF" stroke="#B8ABCD"/><path d="m822 232 149-20v24l-149 20Z" fill="#B5A6CD"/>
+<path d="M778 195V91q0-21 23-24l91-10q25-2 25 21v114l-28 4V88l-83 11v100Z" fill="url(#metal)" stroke="#ADA0C4"/>
+<path d="m892 57 25 12q13 7 13 24v99l-13 6V78q0-21-25-21Z" fill="#AB9ABD"/>
+<path d="m806 99 83-11v107l-83 9Z" fill="#DDD4FA" opacity=".22"/>
+<path class="scan-beam" d="m806 120 83-11v11l-83 11Z" fill="#BDE481" opacity=".8"/>
+<g transform="translate(826 132) rotate(-7)"><use href="#doc"/><path class="verified-tick" d="m9 33 8 8 18-22" stroke="#8CA94F" stroke-width="3.5" stroke-linecap="round"/></g>
+<circle cx="852" cy="80" r="4" fill="#BCE67D"/>
+<!-- output papers and publication stack -->
+<path d="m1121 205 121-16 74 29-123 20Z" fill="#F9F7FD" stroke="#BDB2D1"/>
+<g class="paper-stack"><path d="m1141 196 104-15 48 25-104 14Z" fill="#C6BADA" stroke="#AA9CC2"/><path d="m1141 187 104-15 48 25-104 14Z" fill="#E6DDEF" stroke="#BBAED1"/><path d="m1141 178 104-15 48 25-104 14Z" fill="white" stroke="#C5B9D8"/></g>
+<g transform="translate(1173 77) rotate(8)"><path d="M0 0h57l20 20v96H0Z" fill="url(#paper)" stroke="#B6A7CC" stroke-width="1.5"/><path d="M57 0v20h20M14 37h49M14 46h49M14 68h49M14 77h49M14 86h35" stroke="#C6BCD8" stroke-width="2.5"/><text x="14" y="61" font-size="11" fill="#7C6398" font-family="Georgia">Theorem</text><circle cx="65" cy="99" r="17" fill="#C9DD9A"/><path d="m57 99 6 6 10-13" stroke="#638035" stroke-width="2.5" stroke-linecap="round"/></g>
+<!-- document moving along conveyor -->
+<g class="travelling-paper"><g transform="translate(225 181) rotate(-8)"><use href="#doc"/></g></g>
+<g fill="#4B405F" font-family="Hiragino Sans GB, sans-serif" font-size="21" font-weight="600" text-anchor="middle"><text x="173" y="318">提出研究问题</text><text x="490" y="318">AI 自主探索</text><text x="854" y="318">论证与验证</text><text x="1214" y="318">论文与证明文件</text></g>
+</svg>
