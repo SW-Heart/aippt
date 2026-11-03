@@ -596,3 +596,7 @@ h2{font-size:46px}
 .sb-ok{margin-left:auto;color:var(--lime);opacity:0;transition:opacity .4s}
 .sb-ok.on{opacity:1}
 @media print{.cmp-bar i{animation:none!important;transform:none!important}.cmp-save{opacity:1!important}.kg-card.q{opacity:1!important;transform:none!important}}
+/* 全屏演示：隐藏操作栏，舞台铺满 */
+body.fs .toolbar{display:none}
+body.fs .viewport{inset:0}
+body.fs .stage{border-radius:0;box-shadow:none}

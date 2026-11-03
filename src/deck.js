@@ -5,10 +5,17 @@
   let current = 0;
 
   function resize() {
-    const s = Math.min((innerWidth - (innerWidth < 760 ? 0 : 48)) / 1440, (innerHeight - 56 - (innerWidth < 760 ? 0 : 32)) / 810);
+    const full = document.body.classList.contains('fs');
+    const pad = full || innerWidth < 760 ? 0 : 1;
+    const s = Math.min((innerWidth - pad * 48) / 1440, (innerHeight - (full ? 0 : 56) - pad * 32) / 810);
     stage.style.transform = `scale(${s})`;
   }
   addEventListener('resize', resize);
+  // 全屏时隐藏底部操作栏，舞台铺满屏幕；Esc 由浏览器退出全屏
+  document.addEventListener('fullscreenchange', () => {
+    document.body.classList.toggle('fs', !!document.fullscreenElement);
+    resize();
+  });
   resize();
 
   function go(i) {
@@ -111,7 +118,10 @@
     if (['ArrowLeft', 'PageUp', 'ArrowUp'].includes(ev.key)) { ev.preventDefault(); go(current - 1); }
     if (ev.key === 'Home') go(0);
     if (ev.key === 'End') go(slides.length - 1);
-    if (ev.key === 'Escape') $('overview').classList.remove('open');
+    if (ev.key === 'Escape') {
+      $('overview').classList.remove('open');
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    }
     if (ev.key === 'g' || ev.key === 'o') $('overview').classList.toggle('open');
     if (ev.key === 'f') $('fs').click();
   });
