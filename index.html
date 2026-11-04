@@ -640,67 +640,39 @@ body.fs .stage{border-radius:0;box-shadow:none}
 .learning .shots img{background:#F0F0EC}
 @media print{.learn-rail button{opacity:1}}
 
-/* 专业 Skill：研究流程 + 计算引擎 */
-.skills .lead{font-size:18px;max-width:none;margin-top:12px}
-.sk-sec{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--mute);margin:22px 0 10px}
-.sk-sec .num{font:600 12px/1 var(--mono);letter-spacing:.12em;color:var(--lime-deep)}
+/* 专业 Skill：能力说明 + 示例请求 + 产出 */
+.skills .lead{font-size:18px;max-width:none;margin-top:10px}
+.sk-sec{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--mute);margin:16px 0 9px}
+.sk-sec .num{font:600 12px/1 var(--mono);letter-spacing:.1em;color:var(--lime-deep)}
 .sk-sec:after{content:"";flex:1;height:1px;background:var(--line)}
-.sk-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;position:relative}
-.sk-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;display:flex;flex-direction:column;min-width:0}
-.sk-card:not(:last-child):after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);color:var(--lime-deep);font-size:16px}
+.sk-flow,.sk-eng{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.sk-card,.sk-e{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px 12px;display:flex;flex-direction:column;min-width:0}
+.sk-card:not(:last-child):after{content:"→";position:absolute;right:-16px;top:22px;color:var(--lime-deep);font-size:15px}
+.sk-e{background:transparent}
 .sk-h{display:flex;align-items:baseline;gap:8px}
 .sk-h .num{font:500 12px/1 var(--mono);color:var(--lime-deep)}
-.sk-h b{font-size:17px;font-weight:700}
-.sk-h em{font:500 10.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;color:var(--mute);text-transform:uppercase;margin-left:auto}
-.sk-card p,.sk-e p{font-size:12.5px;line-height:1.55;color:var(--ink-2);margin:6px 0 10px}
-.sk-vis{margin-top:auto;height:66px;display:flex;flex-direction:column;justify-content:center}
-.sk-stmt{font:500 10.5px/1.3 var(--mono);letter-spacing:-.02em;color:var(--ink);background:var(--paper-2);border-radius:6px;padding:7px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sk-chips,.sk-docs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.sk-chips i,.sk-docs i{font:500 10.5px/1 var(--mono);font-style:normal;padding:4px 6px;border-radius:4px;background:#CDF55A66;color:var(--ink)}
-.sk-docs i{background:var(--paper-2);padding:7px 8px;font-size:11px}
-.sk-docs i.part{background:transparent;border:1px dashed var(--amber);color:#9A6A14}
-.sk-dag{width:100%;height:64px;overflow:visible}
-.sk-dag path{fill:none;stroke:var(--ink-2);stroke-width:1.3}
-.sk-dag .gapl{stroke:var(--rose);stroke-dasharray:3 3}
-.sk-dag circle{fill:var(--ink);stroke:var(--ink)}
-.sk-dag text{font:600 9px var(--mono);fill:var(--paper);text-anchor:middle}
-.sk-dag .gap circle{fill:var(--card);stroke:var(--rose);stroke-dasharray:3 2.5;animation:skgap 1.8s ease-in-out infinite}
-.sk-dag .gap text{fill:var(--rose)}
-@keyframes skgap{50%{stroke-opacity:.35}}
-.sk-audit{display:flex;flex-direction:column;gap:4px}
-.sk-audit span{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-2);border-bottom:1px dashed var(--line);padding-bottom:3px}
-.sk-audit b{font:600 10.5px/1 var(--mono);color:var(--ink)}
-.sk-audit em{margin-left:auto;font:500 10.5px/1 var(--sans);font-style:normal;padding:3px 6px;border-radius:4px}
-.sk-audit em.ok{background:#CDF55A66;color:var(--ink)}
-.sk-audit em.warn{background:#C9634E1f;color:var(--rose)}
-.sk-goal{display:grid;grid-template-columns:240px minmax(0,1fr);align-items:center;gap:20px;margin-top:12px;background:var(--night);color:var(--on-night);border-radius:12px;padding:12px 18px;height:48px}
-.sk-gl{display:flex;align-items:baseline;gap:8px}
+.sk-h b{font-size:17px;font-weight:700;white-space:nowrap}
+.sk-h em{font:500 11.5px/1 var(--sans);font-style:normal;color:var(--mute);margin-left:auto;white-space:nowrap}
+.sk-e .sk-h em{margin-left:0}
+.sk-card p,.sk-e p{font-size:12.5px;line-height:1.55;color:var(--ink-2);margin:6px 0 9px}
+.sk-ask{margin-top:auto;font-size:12px;line-height:1.45;color:var(--ink);background:var(--paper-2);border-radius:8px 8px 8px 2px;padding:6px 9px}
+.sk-ask span{display:block;font:500 10px/1 var(--mono);letter-spacing:.08em;color:var(--lime-deep);margin-bottom:4px}
+.sk-out{display:flex;gap:8px;align-items:baseline;margin-top:7px;font-size:12px;font-weight:600;color:var(--ink)}
+.sk-out span{font:500 10px/1 var(--mono);letter-spacing:.08em;color:var(--mute)}
+.sk-res{margin-top:7px;background:var(--night);color:var(--lime);border-radius:7px;padding:7px 10px;font:500 12px/1.2 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sk-res:before{content:"结果  ";font-size:10px;letter-spacing:.08em;color:var(--on-night-2)}
+.sk-goal{display:grid;grid-template-columns:auto minmax(0,1fr) 200px;align-items:center;gap:22px;margin-top:10px;background:var(--night);color:var(--on-night);border-radius:12px;padding:0 20px;height:50px}
+.sk-gl{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
 .sk-gl .num{font:500 12px/1 var(--mono);color:var(--lime)}
 .sk-gl b{font-size:16px}
-.sk-gl em{font:500 10.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;color:var(--on-night-2);text-transform:uppercase}
-.sk-track{position:relative;height:24px}
+.sk-gl em{font:500 11.5px/1 var(--sans);font-style:normal;color:var(--on-night-2)}
+.sk-gd{margin:0;font-size:13px;color:var(--on-night-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sk-track{position:relative;height:12px}
 .sk-track:before{content:"";position:absolute;left:0;right:0;top:5px;height:2px;background:var(--night-line)}
 .sk-track .cp{position:absolute;top:1px;width:10px;height:10px;transform:rotate(45deg);background:var(--night);border:1.5px solid var(--lime);margin-left:-5px}
-.sk-track .run{position:absolute;top:2px;left:0;width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px #CDF55A33;animation:skrun 6s linear infinite}
+.sk-track .run{position:absolute;top:2px;left:0;width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px #CDF55A33;animation:skrun 5s linear infinite}
 @keyframes skrun{from{left:0}to{left:100%}}
-.sk-track span{position:absolute;top:15px;font-size:11.5px;color:var(--on-night-2);white-space:nowrap;margin-left:12px;line-height:1}
-.sk-eng{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
-.sk-e{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;min-width:0;overflow:hidden;display:flex;flex-direction:column}.sk-e .sk-run{margin-top:auto}
-.sk-e .sk-h{padding-right:76px;flex-direction:column;gap:5px}
-.sk-e .sk-h em{margin-left:0;font:500 12px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink-2)}
-.sk-e p{margin-bottom:9px}
-.sk-g{position:absolute;right:16px;top:14px;width:52px;height:50px;overflow:visible}
-.sk-g path{fill:none;stroke:var(--ink);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.sk-g .thin{stroke:var(--lime-deep);stroke-width:1.4;stroke-dasharray:3 3}
-.sk-g .pt{fill:var(--lime);stroke:var(--ink);stroke-width:1.5}
-.sk-g .dg{font:600 15px var(--mono);fill:var(--ink-2);text-anchor:end}.sk-g .dg.l{fill:var(--lime-deep)}
-.sk-g .int{font:400 64px var(--serif);fill:var(--ink)}
-.sk-run{background:var(--night);border-radius:7px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;font:500 10.5px/1.25 var(--mono);color:var(--on-night)}
-.sk-run>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sk-run .p{color:var(--lime)}
-.sk-run .o{color:var(--lime)}
-.sk-e p span{white-space:nowrap;display:inline-block}.sk-e p span:not(:last-child):after{content:"·";color:var(--mute);margin:0 5px}
-@media print{.sk-track .run,.sk-dag .gap circle{animation:none!important}}
+@media print{.sk-track .run{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1028,34 +1000,21 @@ body.fs .stage{border-radius:0;box-shadow:none}
 <div class="content skills">
   <div class="head">
     <p class="kicker stagek rv d0"><span class="seg"><i class="past"></i><i class="on"></i><i class=""></i><i class=""></i></span>流水线 · 工位 02<b>自主探索</b></p>
-    <h2 class="rv d1">专业 Skill，<span class="hl">按数学家的方式工作</span></h2>
-    <p class="lead rv d2">九项面向数学研究的专业 Skill：五项把关从陈述到成稿的研究流程，四个计算引擎在本地给出可复算的精确结果。</p>
+    <h2 class="rv d1">专业 Skill，<span class="hl">你提需求，它按专业流程完成</span></h2>
+    <p class="lead rv d2">无需了解背后的工具链：用自然语言说出要做的事，Agent 会自动调用对应的 Skill。</p>
   </div>
-  <div class="sk-sec rv d3"><span class="num">研究流程 · 5</span>从一个猜想到一份可审查的成果</div>
+  <div class="sk-sec rv d3"><span class="num">做研究 · 5 项</span>从一个猜想，到一篇经得起审查的论文</div>
   <div class="sk-flow">
-    <div class="sk-card rv d3"><div class="sk-h"><span class="num">01</span><b>锁定陈述</b><em>Statement Lock</em></div><p>证明之前，先锁定到底要证什么：量词、定义域、假设、边界情形与来源出处。</p><div class="sk-vis"><code class="sk-stmt">∀n&gt;1, n 素数 ⇔ (n−1)! ≡ −1 (mod n)</code><div class="sk-chips"><i>量词 ✓</i><i>定义域 ✓</i><i>边界 n=4 ✓</i><i>来源 ✓</i></div></div></div><div class="sk-card rv d4"><div class="sk-h"><span class="num">02</span><b>构造证明</b><em>Proof Construction</em></div><p>以引理依赖图规划证明，缺口显式标注，每步附来源与可复算证据。</p><div class="sk-vis"><svg class="sk-dag" viewBox="0 0 250 64" aria-hidden="true">
-  <path d="M20 14C60 14 60 32 100 32M20 50C60 50 60 32 100 32M100 32H160M160 32C190 32 196 14 226 14M160 32C190 32 196 50 226 50"/>
-  <path class="gapl" d="M160 32H226"/>
-  <g><circle cx="20" cy="14" r="10"/><text x="20" y="17.5">L1</text></g><g><circle cx="20" cy="50" r="10"/><text x="20" y="53.5">L2</text></g><g><circle cx="100" cy="32" r="10"/><text x="100" y="35.5">L3</text></g><g><circle cx="226" cy="14" r="10"/><text x="226" y="17.5">T</text></g>
-  <g class="gap"><circle cx="160" cy="32" r="10"/><text x="160" y="35.5">?</text></g><g class="gap"><circle cx="226" cy="50" r="10"/><text x="226" y="53.5">L4</text></g>
-</svg></div></div><div class="sk-card rv d5"><div class="sk-h"><span class="num">03</span><b>独立审查</b><em>Proof Audit</em></div><p>冻结带版本的审查包，逐条裁定问题；区分“结构就绪”与“数学闭合”。</p><div class="sk-vis"><div class="sk-audit"><span><b>F1</b>引理 3 适用条件<em class="ok">已裁定</em></span><span><b>F2</b>n = 4 边界情形<em class="ok">已裁定</em></span><span><b>F3</b>步骤 7 缺少引用<em class="warn">待修订</em></span></div></div></div><div class="sk-card rv d6"><div class="sk-h"><span class="num">04</span><b>成稿归档</b><em>Manuscript</em></div><p>整理为带版本的手稿、参考文献与可复现证明档案，部分结果显式标注。</p><div class="sk-vis"><div class="sk-docs"><i>.md</i><i>.tex</i><i>.pdf</i><i>refs.bib</i><i class="part">部分结果 · 已标注</i></div></div></div>
+    <div class="sk-card rv d3"><div class="sk-h"><span class="num">01</span><b>把问题说准</b><em>锁定陈述</em></div><p>把猜想或定理整理成无歧义的精确陈述：量词、定义域、假设与边界情形都写清，并标明出处。</p><div class="sk-ask"><span>你可以说</span>“把定理 2.1 整理成可以开始证明的精确陈述”</div><div class="sk-out"><span>得到</span>精确陈述 · 假设清单 · 边界情形</div></div><div class="sk-card rv d4"><div class="sk-h"><span class="num">02</span><b>规划并写出证明</b><em>构造证明</em></div><p>把证明拆成引理逐个攻克，每步附依据与计算证据；没解决的缺口明确列出，不含糊带过。</p><div class="sk-ask"><span>你可以说</span>“为这个猜想规划证明路线”</div><div class="sk-out"><span>得到</span>引理依赖图 · 证明草稿 · 待解决缺口</div></div><div class="sk-card rv d5"><div class="sk-h"><span class="num">03</span><b>像审稿人一样查证明</b><em>独立审查</em></div><p>独立审查完整证明，逐条指出问题并裁定，告诉你它只是结构完整，还是真正成立。</p><div class="sk-ask"><span>你可以说</span>“审一下这份证明，哪里有漏洞？”</div><div class="sk-out"><span>得到</span>问题清单 · 逐条裁定 · 成立与否</div></div><div class="sk-card rv d6"><div class="sk-h"><span class="num">04</span><b>整理成论文</b><em>成稿归档</em></div><p>整理成手稿、参考文献与可复现材料，输出 Markdown、LaTeX 或 PDF。</p><div class="sk-ask"><span>你可以说</span>“把这些结果整理成一篇 LaTeX 论文”</div><div class="sk-out"><span>得到</span>论文手稿 · 参考文献 · 复现材料</div></div>
   </div>
   <div class="sk-goal rv d6">
-    <div class="sk-gl"><span class="num">05</span><b>目标驱动研究</b><em>Goal Runner</em></div>
-    <div class="sk-track"><i class="cp" style="left:6%"></i><i class="cp" style="left:30%"></i><i class="cp" style="left:54%"></i><i class="cp" style="left:78%"></i><i class="run"></i>
-      <span style="left:6%">持久检查点</span><span style="left:30%">证据完整性</span><span style="left:54%">最小缺口优先</span><span style="left:78%">上下文丢失后安全恢复</span></div>
+    <div class="sk-gl"><span class="num">05</span><b>长期研究不断线</b><em>目标驱动研究</em></div>
+    <p class="sk-gd">设定一个研究目标，Agent 连续推进数天：自动存档进度，优先攻克最小的缺口，对话中断后从检查点继续。</p>
+    <div class="sk-track"><i class="cp" style="left:4%"></i><i class="cp" style="left:36%"></i><i class="cp" style="left:68%"></i><i class="cp" style="left:96%"></i><i class="run"></i></div>
   </div>
-  <div class="sk-sec rv d7"><span class="num">计算引擎 · 4</span>本地运行，首次使用自动配置环境；脚本与结果随课题留存、可复算</div>
+  <div class="sk-sec rv d7"><span class="num">做计算 · 4 个引擎</span>需要算的地方，给出精确、可复算的结果；本地运行，首次使用自动配置环境</div>
   <div class="sk-eng">
-    <div class="sk-e rv d7"><svg class="sk-g" viewBox="0 -10 92 100" aria-hidden="true"><path d="M0 40H92" class="thin"/><path d="M6.8 40.0 L7.7 35.7 L8.7 34.1 L9.6 33.0 L10.5 32.1 L11.5 31.5 L12.4 30.9 L13.3 30.5 L14.3 30.1 L15.2 29.9 L16.1 29.7 L17.1 29.6 L18.0 29.5 L18.9 29.5 L19.9 29.5 L20.8 29.6 L21.7 29.8 L22.7 30.0 L23.6 30.2 L24.5 30.5 L25.5 30.8 L26.4 31.2 L27.3 31.6 L28.3 32.1 L29.2 32.6 L30.1 33.2 L31.1 33.9 L32.0 34.7 L32.9 35.6 L33.9 36.9 L34.8 40.0 L34.8 40.0 L33.9 43.1 L32.9 44.4 L32.0 45.3 L31.1 46.1 L30.1 46.8 L29.2 47.4 L28.3 47.9 L27.3 48.4 L26.4 48.8 L25.5 49.2 L24.5 49.5 L23.6 49.8 L22.7 50.0 L21.7 50.2 L20.8 50.4 L19.9 50.5 L18.9 50.5 L18.0 50.5 L17.1 50.4 L16.1 50.3 L15.2 50.1 L14.3 49.9 L13.3 49.5 L12.4 49.1 L11.5 48.5 L10.5 47.9 L9.6 47.0 L8.7 45.9 L7.7 44.3 L6.8 40.0Z"/><path d="M88.0 2.3 L86.7 4.1 L85.4 5.8 L84.1 7.5 L82.8 9.1 L81.6 10.7 L80.4 12.2 L79.3 13.7 L78.1 15.1 L77.0 16.5 L76.0 17.9 L74.9 19.2 L73.9 20.5 L73.0 21.7 L72.0 22.9 L71.1 24.1 L70.2 25.2 L69.4 26.3 L68.6 27.4 L67.9 28.5 L67.1 29.5 L66.5 30.5 L65.8 31.5 L65.3 32.4 L64.7 33.4 L64.2 34.4 L63.8 35.3 L63.4 36.3 L63.1 37.4 L62.9 38.5 L62.8 40.0 L62.9 41.5 L63.1 42.6 L63.4 43.7 L63.8 44.7 L64.2 45.6 L64.7 46.6 L65.3 47.6 L65.8 48.5 L66.5 49.5 L67.1 50.5 L67.9 51.5 L68.6 52.6 L69.4 53.7 L70.2 54.8 L71.1 55.9 L72.0 57.1 L73.0 58.3 L73.9 59.5 L74.9 60.8 L76.0 62.1 L77.0 63.5 L78.1 64.9 L79.3 66.3 L80.4 67.8 L81.6 69.3 L82.8 70.9 L84.1 72.5 L85.4 74.2 L86.7 75.9 L88.0 77.7"/><circle cx="20.8" cy="29.6" r="3.5" class="pt"/><circle cx="76.8" cy="16.8" r="3.5" class="pt"/></svg>
-      <div class="sk-h"><b>PARI/GP</b><em>数论计算</em></div><p><span>代数与解析数论</span><span>椭圆曲线</span><span>L-函数</span><span>模形式</span><span>数据库查证</span></p>
-      <div class="sk-run"><span><span class="p">›</span> ellanalyticrank(ellinit([0,0,1,-1,0]))</span><span class="o">[1, 0.3059997738…]</span></div></div><div class="sk-e rv d8"><svg class="sk-g" viewBox="0 -10 92 100" aria-hidden="true"><text x="92" y="16" class="dg">3.1415926</text><text x="92" y="36" class="dg">535897932</text><text x="92" y="56" class="dg">384626433</text><text x="92" y="76" class="dg l">832795028…</text></svg>
-      <div class="sk-h"><b>Julia</b><em>高性能科学计算</em></div><p><span>高精度算术</span><span>线性代数</span><span>数值积分与求根</span><span>优化</span><span>统计</span></p>
-      <div class="sk-run"><span><span class="p">›</span> setprecision(256); sqrt(big(2))</span><span class="o">1.41421356237309504880168872…</span></div></div><div class="sk-e rv d9"><svg class="sk-g" viewBox="0 -10 92 100" aria-hidden="true"><text x="10" y="62" class="int">∫</text><path d="M40 52C50 52 52 20 62 20S74 52 84 52" class="thin"/><path d="M40 52H86"/></svg>
-      <div class="sk-h"><b>SageMath</b><em>符号与精确计算</em></div><p><span>微积分</span><span>代数结构</span><span>组合与图论</span><span>流形</span><span>特殊函数</span><span>绘图</span></p>
-      <div class="sk-run"><span><span class="p">›</span> integrate(x^2*exp(-x), x, 0, oo)</span><span class="o">2</span></div></div><div class="sk-e rv d10"><svg class="sk-g" viewBox="0 -10 92 100" aria-hidden="true"><path d="M46 6 10 62h72Z"/><path d="M46 6 58 44 10 62M58 44l24 18" /><path d="M10 62 46 6" class="thin"/><circle cx="46" cy="6" r="3.5" class="pt"/><circle cx="58" cy="44" r="3.5" class="pt"/></svg>
-      <div class="sk-h"><b>Regina</b><em>低维拓扑</em></div><p><span>三角剖分</span><span>三维流形识别</span><span>生成可复算 Python 脚本</span></p>
-      <div class="sk-run"><span><span class="p">›</span> Example3.poincare().homology()</span><span class="o">0  # 同调球面</span></div></div>
+    <div class="sk-e rv d7"><div class="sk-h"><b>PARI/GP</b><em>数论计算</em></div><p>数论、椭圆曲线、L-函数、模形式等计算，并查阅数论数据库核对结果。</p><div class="sk-ask"><span>你可以说</span>“椭圆曲线 y² + y = x³ − x 的秩是多少？”</div><div class="sk-res">秩 = 1 · L′(E,1) ≈ 0.30600</div></div><div class="sk-e rv d8"><div class="sk-h"><b>Julia</b><em>数值与科学计算</em></div><p>高精度数值、线性代数、积分与求根、优化与统计，可生成图表与数据文件。</p><div class="sk-ask"><span>你可以说</span>“把 √2 算到小数点后 70 位”</div><div class="sk-res">1.41421356237309504880…</div></div><div class="sk-e rv d9"><div class="sk-h"><b>SageMath</b><em>符号与精确计算</em></div><p>求精确解：积分化简、解方程、代数结构、组合图论、流形，并能画数学图像。</p><div class="sk-ask"><span>你可以说</span>“求 ∫₀^∞ x² e⁻ˣ dx 的精确值”</div><div class="sk-res">= 2</div></div><div class="sk-e rv d10"><div class="sk-h"><b>Regina</b><em>低维拓扑计算</em></div><p>三角剖分、三维流形识别与拓扑不变量计算，自动生成可复算的 Python 脚本。</p><div class="sk-ask"><span>你可以说</span>“Poincaré 同调球面的 H₁ 是什么？”</div><div class="sk-res">H₁ = 0（平凡群）</div></div>
   </div>
 </div>
 <div class="pageno">09 / 17</div>
