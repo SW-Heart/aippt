@@ -600,3 +600,13 @@ h2{font-size:46px}
 body.fs .toolbar{display:none}
 body.fs .viewport{inset:0}
 body.fs .stage{border-radius:0;box-shadow:none}
+
+/* AI 辅助学习：学习规划、阶段任务与知识沉淀 */
+.learning .head{max-width:none}.learning h2{font-size:43px}.learning .lead{font-size:18px;line-height:1.6;max-width:none;margin-top:12px}
+.learning-main{display:grid;grid-template-columns:minmax(0,1fr) 368px;gap:30px;height:386px;margin-top:20px}
+.learning-example{display:flex;min-height:0}.learning .tabs{gap:8px;margin-bottom:10px}.learning .tabs button{padding:8px 14px}
+.learning .win{box-shadow:0 12px 30px #17161016}.learning .win-bar{font-family:var(--sans);font-size:11px;padding:0 10px;gap:5px}.learning .win-bar .wt{margin-left:5px}.learning .win-bar .zoom{display:none}.learning .shots img{background:#F0F0EC}
+.learning-points{display:flex;flex-direction:column;justify-content:space-between;padding:0 0 2px}.learning-points h3{font-size:20px;line-height:1.4;margin:9px 0 5px}.learning-points p{font-size:15px;line-height:1.65;color:var(--ink-2);margin:0}.learning-points .tag{font-family:var(--sans);font-size:11px;padding:5px 8px}
+.learning-flow{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:0;list-style:none;margin:22px 0 0;padding:14px 0 0;border-top:1px solid var(--line)}
+.learning-flow li{position:relative;padding:0 10px 0 0;display:flex;flex-direction:column;gap:7px}.learning-flow li:not(:last-child):after{content:'→';position:absolute;right:12px;top:0;color:var(--lime-deep);font-size:19px}.learning-flow .num{color:var(--lime-deep);font-size:11px}.learning-flow b{font-size:14px;white-space:nowrap;line-height:1.4}.learning-flow li>span:last-child{font-size:12px;color:var(--ink-2);line-height:1.4}
+@media print{.learning .shots img.contain{object-fit:contain}}
