@@ -174,9 +174,9 @@ add('我们做什么', 1, `
 // 04 流水线总览 -----------------------------------------------------------
 const lanes = [
   ['提出问题', '从一个边界清晰的课题开始', [['定义研究问题', 5]]],
-  ['自主探索', '在开箱即用的环境里，长时间、多路径推进', [['科研环境', 6], ['长周期探索', 7], ['专业工具', 8]]],
-  ['人机协作', '过程透明，关键节点由研究者把关', [['协作看板', 9], ['进度与审核', 10]]],
-  ['验证交付', '复用定理库，机器检查证明，成果可复现', [['定理库与知识图谱', 11], ['Lean4 验证', 12], ['论文与复现', 13], ['任务总结', 14]]],
+  ['自主探索', '在开箱即用的环境里，长时间、多路径推进', [['科研环境', 6], ['长周期探索', 7], ['专业工具', 8], ['专业 Skill', 9]]],
+  ['人机协作', '过程透明，关键节点由研究者把关', [['协作看板', 10], ['进度与审核', 11]]],
+  ['验证交付', '复用定理库，机器检查证明，成果可复现', [['定理库与知识图谱', 12], ['Lean4 验证', 13], ['论文与复现', 14], ['任务总结', 15]]],
 ];
 add('一条流水线', 1, `
 <div class="content">
@@ -378,6 +378,60 @@ add('专业工具', 3, `
     </div>
   </div>
 </div>`);
+
+// 09 专业 Skill：五项研究流程 Skill（陈述→证明→审查→成稿，目标驱动贯穿）+ 四个本地计算引擎
+const dagSvg = `<svg class="sk-dag" viewBox="0 0 250 64" aria-hidden="true">
+  <path d="M20 14C60 14 60 32 100 32M20 50C60 50 60 32 100 32M100 32H160M160 32C190 32 196 14 226 14M160 32C190 32 196 50 226 50"/>
+  <path class="gapl" d="M160 32H226"/>
+  ${[[20, 14, 'L1'], [20, 50, 'L2'], [100, 32, 'L3'], [226, 14, 'T']].map(([x, y, t]) => `<g><circle cx="${x}" cy="${y}" r="10"/><text x="${x}" y="${y + 3.5}">${t}</text></g>`).join('')}
+  <g class="gap"><circle cx="160" cy="32" r="10"/><text x="160" y="35.5">?</text></g><g class="gap"><circle cx="226" cy="50" r="10"/><text x="226" y="53.5">L4</text></g>
+</svg>`;
+const SK_FLOW = [
+  ['锁定陈述', 'Statement Lock', '证明之前，先锁定到底要证什么：量词、定义域、假设、边界情形与来源出处。',
+    `<code class="sk-stmt">∀n&gt;1, n 素数 ⇔ (n−1)! ≡ −1 (mod n)</code><div class="sk-chips"><i>量词 ✓</i><i>定义域 ✓</i><i>边界 n=4 ✓</i><i>来源 ✓</i></div>`],
+  ['构造证明', 'Proof Construction', '以引理依赖图规划证明，缺口显式标注，每步附来源与可复算证据。', dagSvg],
+  ['独立审查', 'Proof Audit', '冻结带版本的审查包，逐条裁定问题；区分“结构就绪”与“数学闭合”。',
+    `<div class="sk-audit"><span><b>F1</b>引理 3 适用条件<em class="ok">已裁定</em></span><span><b>F2</b>n = 4 边界情形<em class="ok">已裁定</em></span><span><b>F3</b>步骤 7 缺少引用<em class="warn">待修订</em></span></div>`],
+  ['成稿归档', 'Manuscript', '整理为带版本的手稿、参考文献与可复现证明档案，部分结果显式标注。',
+    `<div class="sk-docs"><i>.md</i><i>.tex</i><i>.pdf</i><i>refs.bib</i><i class="part">部分结果 · 已标注</i></div>`],
+];
+const SK_ENG = [
+  ['PARI/GP', '数论计算', '代数与解析数论 · 椭圆曲线 · L-函数 · 模形式 · 数据库查证',
+    'ellanalyticrank(ellinit([0,0,1,-1,0]))', '[1, 0.3059997738…]',
+    `<path d="M0 40H92" class="thin"/><path d="M6.8 40.0 L7.7 35.7 L8.7 34.1 L9.6 33.0 L10.5 32.1 L11.5 31.5 L12.4 30.9 L13.3 30.5 L14.3 30.1 L15.2 29.9 L16.1 29.7 L17.1 29.6 L18.0 29.5 L18.9 29.5 L19.9 29.5 L20.8 29.6 L21.7 29.8 L22.7 30.0 L23.6 30.2 L24.5 30.5 L25.5 30.8 L26.4 31.2 L27.3 31.6 L28.3 32.1 L29.2 32.6 L30.1 33.2 L31.1 33.9 L32.0 34.7 L32.9 35.6 L33.9 36.9 L34.8 40.0 L34.8 40.0 L33.9 43.1 L32.9 44.4 L32.0 45.3 L31.1 46.1 L30.1 46.8 L29.2 47.4 L28.3 47.9 L27.3 48.4 L26.4 48.8 L25.5 49.2 L24.5 49.5 L23.6 49.8 L22.7 50.0 L21.7 50.2 L20.8 50.4 L19.9 50.5 L18.9 50.5 L18.0 50.5 L17.1 50.4 L16.1 50.3 L15.2 50.1 L14.3 49.9 L13.3 49.5 L12.4 49.1 L11.5 48.5 L10.5 47.9 L9.6 47.0 L8.7 45.9 L7.7 44.3 L6.8 40.0Z"/><path d="M88.0 2.3 L86.7 4.1 L85.4 5.8 L84.1 7.5 L82.8 9.1 L81.6 10.7 L80.4 12.2 L79.3 13.7 L78.1 15.1 L77.0 16.5 L76.0 17.9 L74.9 19.2 L73.9 20.5 L73.0 21.7 L72.0 22.9 L71.1 24.1 L70.2 25.2 L69.4 26.3 L68.6 27.4 L67.9 28.5 L67.1 29.5 L66.5 30.5 L65.8 31.5 L65.3 32.4 L64.7 33.4 L64.2 34.4 L63.8 35.3 L63.4 36.3 L63.1 37.4 L62.9 38.5 L62.8 40.0 L62.9 41.5 L63.1 42.6 L63.4 43.7 L63.8 44.7 L64.2 45.6 L64.7 46.6 L65.3 47.6 L65.8 48.5 L66.5 49.5 L67.1 50.5 L67.9 51.5 L68.6 52.6 L69.4 53.7 L70.2 54.8 L71.1 55.9 L72.0 57.1 L73.0 58.3 L73.9 59.5 L74.9 60.8 L76.0 62.1 L77.0 63.5 L78.1 64.9 L79.3 66.3 L80.4 67.8 L81.6 69.3 L82.8 70.9 L84.1 72.5 L85.4 74.2 L86.7 75.9 L88.0 77.7"/><circle cx="20.8" cy="29.6" r="3.5" class="pt"/><circle cx="76.8" cy="16.8" r="3.5" class="pt"/>`],
+  ['Julia', '高性能科学计算', '高精度算术 · 线性代数 · 数值积分与求根 · 优化 · 统计',
+    'setprecision(256); sqrt(big(2))', '1.41421356237309504880168872…',
+    `<text x="92" y="16" class="dg">3.1415926</text><text x="92" y="36" class="dg">535897932</text><text x="92" y="56" class="dg">384626433</text><text x="92" y="76" class="dg l">832795028…</text>`],
+  ['SageMath', '符号与精确计算', '微积分 · 代数结构 · 组合与图论 · 流形 · 特殊函数 · 绘图',
+    'integrate(x^2*exp(-x), x, 0, oo)', '2',
+    `<text x="10" y="62" class="int">∫</text><path d="M40 52C50 52 52 20 62 20S74 52 84 52" class="thin"/><path d="M40 52H86"/>`],
+  ['Regina', '低维拓扑', '三角剖分 · 三维流形识别 · 生成可复算 Python 脚本',
+    'Example3.poincare().homology()', '0  # 同调球面',
+    `<path d="M46 6 10 62h72Z"/><path d="M46 6 58 44 10 62M58 44l24 18" /><path d="M10 62 46 6" class="thin"/><circle cx="46" cy="6" r="3.5" class="pt"/><circle cx="58" cy="44" r="3.5" class="pt"/>`],
+];
+add('专业 Skill', 3, `
+<div class="content skills">
+  <div class="head">
+    ${kick(2)}
+    <h2 class="${rv(1)}">专业 Skill，<span class="hl">按数学家的方式工作</span></h2>
+    <p class="lead ${rv(2)}">九项面向数学研究的专业 Skill：五项把关从陈述到成稿的研究流程，四个计算引擎在本地给出可复算的精确结果。</p>
+  </div>
+  <div class="sk-sec ${rv(3)}"><span class="num">研究流程 · 5</span>从一个猜想到一份可审查的成果</div>
+  <div class="sk-flow">
+    ${SK_FLOW.map(([t, en, d, vis], i) => `<div class="sk-card ${rv(3 + i)}"><div class="sk-h"><span class="num">0${i + 1}</span><b>${t}</b><em>${en}</em></div><p>${d}</p><div class="sk-vis">${vis}</div></div>`).join('')}
+  </div>
+  <div class="sk-goal ${rv(6)}">
+    <div class="sk-gl"><span class="num">05</span><b>目标驱动研究</b><em>Goal Runner</em></div>
+    <div class="sk-track"><i class="cp" style="left:6%"></i><i class="cp" style="left:30%"></i><i class="cp" style="left:54%"></i><i class="cp" style="left:78%"></i><i class="run"></i>
+      <span style="left:6%">持久检查点</span><span style="left:30%">证据完整性</span><span style="left:54%">最小缺口优先</span><span style="left:78%">上下文丢失后安全恢复</span></div>
+  </div>
+  <div class="sk-sec ${rv(7)}"><span class="num">计算引擎 · 4</span>本地运行，首次使用自动配置环境；脚本与结果随课题留存、可复算</div>
+  <div class="sk-eng">
+    ${SK_ENG.map(([n, t, d, cmd, out, g], i) => `<div class="sk-e ${rv(7 + i)}"><svg class="sk-g" viewBox="0 -10 92 100" aria-hidden="true">${g}</svg>
+      <div class="sk-h"><b>${n}</b><em>${t}</em></div><p>${d.split(' · ').map((x) => `<span>${x}</span>`).join('')}</p>
+      <div class="sk-run"><span><span class="p">›</span> ${cmd}</span><span class="o">${out}</span></div></div>`).join('')}
+  </div>
+</div>`, { desc: '五项研究流程 Skill 与四个本地计算引擎' });
 
 // 09 协作看板 -------------------------------------------------------------
 const sidePoints = (arr, start = 3) => `<div class="points">${arr.map(([t, d], i) => `<div class="point ${rv(start + i)}"><span class="num">0${i + 1}</span><h3>${t}</h3><p>${d}</p></div>`).join('')}</div>`;
