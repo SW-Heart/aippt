@@ -654,28 +654,36 @@ const loopSvg = `<svg class="loop" viewBox="0 0 600 440" aria-label="持续运�
   <text x="${CX}" y="${CY + 54}" class="loop-s" text-anchor="middle">流水线持续运转</text>
 </svg>`;
 // AI 辅助学习：科研始终需要人的方向与判断，也帮助学习者建立专业能力。
+// 左侧三个阶段即截图标签（复用 .gallery 的 .tabs button 切换逻辑），右侧为对应产品截图。
+const LEARN = [
+  ['learning-project', '规划', '规划学习体系', '从一个问题，开始一门学科', 'Agent 创建学科项目与标签，把课程目标拆为主任务与分阶段子任务。',
+    ['Channel 提问', 'Project', '标签', '主 Issue', '阶段 Issue'], '自然语言处理与大语言模型学习 · 项目与阶段规划', 'top left'],
+  ['learning-issue', '学习', '测验与验收', '每个阶段，都知道如何前进', '每阶段给出学习目标、内容与小测；提交证据，由 Agent 或老师验收。',
+    ['小测', '提交证据', 'Agent / 老师验收', '下一阶段'], 'Stage 1 · 世界模型 · 学习目标、内容与小测', 'top left'],
+  ['learning-wiki', '沉淀', 'Wiki 学习档案', '把学习过程，留成自己的体系', '学习记录、反馈与稳定知识持续沉淀进 Wiki，后续学习有据可循。',
+    ['学习记录', '验收反馈', '稳定知识', 'Wiki'], 'CS336 2025 · 语言模型训练学习档案', 'top right'],
+];
+const learnImgs = await Promise.all(LEARN.map(async ([name, , t, , , , file, pos], i) =>
+  `<img class="${i === 0 ? 'on' : ''}" src="${await shot(name)}" alt="${t}" data-file="${file}" style="object-position:${pos}" loading="lazy">`));
 add('AI 辅助学习', 0, `
 <div class="content learning">
   <div class="head">
-    <h2 class="${rv(0)}">人始终是关键，<span class="hl">学习也有 AI 同行</span></h2>
-    <p class="lead ${rv(1)}">科研需要人的方向与判断。我们也帮助普通学习者快速入门一个专业，<br>规划完整学习体系，通过测验、指引与阶段验收，逐步建立专业能力。</p>
+    <p class="kicker ${rv(0)}">延伸场景 · AI 辅助学习</p>
+    <h2 class="${rv(1)}">人始终是关键，<span class="hl">学习也有 AI 同行</span></h2>
+    <p class="lead ${rv(2)}">科研需要人的方向与判断。我们也帮助普通学习者快速入门一个专业：规划完整学习体系，<br>通过测验、指引与阶段验收，逐步建立专业能力。</p>
   </div>
-  <div class="learning-main">
-    <div class="learning-example ${rv(2)}">${await gallery([
-      ['learning-project','学科项目',{contain:true,file:'自然语言处理与大语言模型学习 · 项目与阶段规划'}],
-      ['learning-issue','阶段 Issue',{contain:true,file:'世界模型 · 学习目标、内容与小测'}],
-      ['learning-wiki','Wiki 学习档案',{contain:true,file:'CS336 2025 · 学习档案与知识沉淀'}],
-    ])}</div>
-    <div class="learning-points ${rv(3)}">
-      <div><span class="tag lime">规划学习体系</span><h3>从一个问题，开始一门学科</h3><p>Agent 组织学科项目与标签，将课程目标拆为主任务和分阶段学习任务。</p></div>
-      <div><span class="tag">测验与指引</span><h3>每个阶段，都知道如何前进</h3><p>明确学习目标、内容与小测；提交学习证据，由 Agent 或老师验收，再推进下一阶段。</p></div>
-      <div><span class="tag">知识沉淀</span><h3>把学习过程，留成自己的体系</h3><p>通过 Wiki 持续整理学习记录、反馈与知识，让后续学习有据可循。</p></div>
+  <div class="gallery learn-g">
+    <div class="tabs learn-rail ${rv(3)}" role="tablist" aria-label="AI 辅助学习流程">
+      ${LEARN.map(([, k, tag, h, d, steps], i) => `<button role="tab" aria-selected="${i === 0}">
+        <span class="ls-k"><span class="num">0${i + 1}</span>${k}<em>${tag}</em></span>
+        <b>${h}</b><span class="ls-d">${d}</span>
+        <span class="ls-steps">${steps.map((x) => `<i>${x}</i>`).join('')}</span>${i === 1 ? '<span class="redo">↺ 未通过：根据反馈修订后重新提交</span>' : ''}
+      </button>`).join('')}
     </div>
+    <div class="win ${rv(4)}" data-zoom><div class="win-bar"><i></i><i></i><i></i><span class="wt">${LEARN[0][6]}</span><span class="zoom">⤢ 点击放大</span></div>
+      <div class="shots">${learnImgs.join('')}</div></div>
   </div>
-  <ol class="learning-flow ${rv(4)}" aria-label="AI 辅助学习完整流程">
-    ${[['Channel','提问'],['Agent','创建 Project'],['Project 级','创建标签'],['主 Issue','创建主任务'],['阶段子 Issue','拆分学习阶段'],['学习证据','完成并提交'],['Agent / 老师','验收与反馈'],['下一阶段','通过后推进'],['Wiki','沉淀学习档案']].map(([a,b],i)=>`<li><span class="num">${String(i+1).padStart(2,'0')}</span><b>${a}</b><span>${b}</span></li>`).join('')}
-  </ol>
-</div>`, {desc:'从学科规划、阶段任务与测验，到证据验收和 Wiki 沉淀'});
+</div>`, { desc: '从学科规划、阶段任务与测验，到证据验收和 Wiki 沉淀' });
 
 add('机构申请', 0, `
 <div class="content closing">
