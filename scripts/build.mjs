@@ -103,10 +103,9 @@ const pipelineSvg = `<svg class="pipe" viewBox="0 0 1296 262" aria-label="自动
 // 01 封面 ---------------------------------------------------------------
 add('封面', 0, `
 <div class="content cover">
-  <div style="position:absolute;left:0;top:10px;width:560px">
-    <p class="kicker ${rv(0)}">AI Research Agent · 面向数学研究</p>
-    <h1 class="title ${rv(1)}">矩阵工坊</h1>
-    <p class="sub ${rv(2)}">构建科学发现的流水线</p>
+  <div class="cover-l">
+    <p class="cover-brand ${rv(0)}"><span class="brand-mark">M</span><b>矩阵工坊</b><span class="cb-sep"></span><span class="cb-k">AI Research Agent · 面向数学研究</span></p>
+    <h1 class="title ${rv(1)}">构建科学发现的<br><span class="tl">流水线</span></h1>
     <p class="lead ${rv(3)}">让 AI 持续检索、探索、计算与验证，<br>让研究者专注于提出问题、判断方向。</p>
   </div>
   <button class="shot ${rv(2)}" data-zoom aria-label="放大查看产品主页"><img src="${await asset('product.png')}" alt="矩阵工坊产品主页"></button>
